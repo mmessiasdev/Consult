@@ -131,32 +131,24 @@ class AuthController extends GetxController {
     }
   }
 
-  void posting({
-    required String title,
-    required String desc,
-    required String content,
-    required int profileId,
-    required bool public,
-    // required int chunkId,
-    String? fileName,
-    // List<int>? selectFile
+  void requests({
+    required String fullname,
+    required String cpf,
+    required String resultReq,
   }) async {
     try {
       EasyLoading.show(
-        status: 'Loading...',
+        status: 'Iniciando procura...',
         dismissOnTap: false,
       );
       var token = await LocalAuthService().getSecureToken("token");
-      var result = await RemoteAuthService().addPost(
+      var result = await RemoteAuthService().addRequests(
         token: token.toString(),
-        title: title,
-        desc: desc,
-        content: content,
-        profileId: profileId,
-        public: public,
+        resultReq: resultReq.toString(),
+        colaboratorname: fullname.toString(),
+        cpf: cpf.toString(),
       );
-      EasyLoading.showSuccess("Seu relato poster enviado.");
-      Navigator.of(Get.overlayContext!).pushReplacementNamed('/');
+      Navigator.of(Get.overlayContext!).pushReplacementNamed('/resultapproved');
 
       // if (result.statusCode == 200) {
       //   int postId = json.decode(result.body)['id'];
@@ -193,73 +185,54 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<Map<String, String?>?> iniciarPagamentoMercadoPago(
-      double valor) async {
-    var uuid = Uuid();
-    String idempotencyKey = uuid.v4();
+  void finishRequest() async {
+    try {
+      EasyLoading.show(
+        status: 'Loading...',
+        dismissOnTap: false,
+      );
+      // var token = await LocalAuthService().getSecureToken("token");
+      // var result = await RemoteAuthService().addRequests(
+      //   token: token.toString(),
+      //   resultReq: resultReq.toString(),
+      //   colaboratorname: fullname.toString(),
+      //   cpf: cpf.toString(),
+      // );
+      EasyLoading.showSuccess("Finalizando procura");
+      Navigator.of(Get.overlayContext!).pushReplacementNamed('/');
 
-    final url = Uri.parse("https://api.mercadopago.com/v1/payments");
+      // if (result.statusCode == 200) {
+      //   int postId = json.decode(result.body)['id'];
+      //   var url = Uri.parse('$urlEnv/upload');
+      //   var request = http.MultipartRequest("POST", url);
+      //   request.files.add(await http.MultipartFile.fromBytes(
+      //     'files',
+      //     selectFile!,
+      //     contentType: MediaType('application', 'pdf'),
+      //     filename: fileName ?? "Benefeer File",
+      //   ));
 
-    final response = await http.post(
-      url,
-      headers: {
-        "Authorization":
-            "Bearer TEST-2869162016512406-102909-e3a08dc42979eadc840e775ebf8c7a28-1983614734",
-        "X-Idempotency-Key": idempotencyKey,
-      },
-      body: jsonEncode({
-        "transaction_amount": valor,
-        "description": "Acesso especial",
-        "payment_method_id": "pix",
-        "payer": {"email": "mmessiasltk@gmail.com"}
-      }),
-    );
+      //   request.files.add(await http.MultipartFile.fromString("ref", "post"));
+      //   request.files
+      //       .add(await http.MultipartFile.fromString("refId", "${postId}"));
 
-    if (response.statusCode == 201) {
-      final paymentResponse = jsonDecode(response.body);
-      final qrCodeBase64 = paymentResponse['point_of_interaction']
-          ['transaction_data']['qr_code_base64'];
-      final qrCodeCopyPaste = paymentResponse['point_of_interaction']
-          ['transaction_data']['qr_code'];
-      final paymentId = paymentResponse['id']
-          .toString(); // ID do pagamento para futuras verificações
+      //   request.files
+      //       .add(await http.MultipartFile.fromString("field", "files"));
 
-      return {
-        "qrCodeBase64": qrCodeBase64,
-        "qrCodeCopyPaste": qrCodeCopyPaste,
-        "paymentId": paymentId,
-      };
-    } else {
-      print("Erro no pagamento: ${response.statusCode}");
-      return null;
-    }
-  }
-
-  Future<bool> verificarStatusPagamento(String paymentId) async {
-    final url = Uri.parse("https://api.mercadopago.com/v1/payments/$paymentId");
-
-    final response = await http.get(
-      url,
-      headers: {
-        "Authorization":
-            "Bearer TEST-2869162016512406-102909-e3a08dc42979eadc840e775ebf8c7a28",
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final paymentResponse = jsonDecode(response.body);
-      print(paymentResponse['status']);
-
-      // Verifique se o status do pagamento é "approved"
-      if (paymentResponse['status'] == "approved") {
-        return true; // Retorna true se o status for "approved"
-      } else {
-        print("Pagamento não aprovado. Status: ${paymentResponse['status']}");
-        return false; // Retorna false se o status não for "approved"
-      }
-    } else {
-      print("Erro ao verificar o status: ${response.statusCode}");
-      return false; // Retorna false se o status code não for 200
+      //   request.headers.addAll({"Authorization": "Bearer $token"});
+      //   request.send().then((response) {
+      //     if (response.statusCode == 200) {
+      //       print("FileUpload Successfuly");
+      //     } else {
+      //       print("FileUpload Error");
+      //     }
+      //   });
+      // }
+    } catch (e) {
+      print(e);
+      EasyLoading.showError('Alguma coisa deu errado.');
+    } finally {
+      EasyLoading.dismiss();
     }
   }
 

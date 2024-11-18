@@ -2,7 +2,9 @@ import 'package:Benefeer/component/buttons.dart';
 import 'package:Benefeer/component/containersLoading.dart';
 import 'package:Benefeer/component/inputdefault.dart';
 import 'package:Benefeer/component/widgets/header.dart';
+import 'package:Benefeer/controller/auth.dart';
 import 'package:Benefeer/view/account/account.dart';
+import 'package:Benefeer/view/result/result.dart';
 import 'package:flutter/material.dart';
 import 'package:Benefeer/component/colors.dart';
 import 'package:Benefeer/component/padding.dart';
@@ -24,6 +26,8 @@ class _HomePageState extends State<HomePage> {
 
   String? token;
   String? fname;
+  String? fullname;
+
   var id;
   bool public = false;
 
@@ -35,31 +39,23 @@ class _HomePageState extends State<HomePage> {
 
   void getString() async {
     var strToken = await LocalAuthService().getSecureToken("token");
+    var strFullname = await LocalAuthService().getFullName("fullname");
 
     // Verifique se o widget ainda está montado antes de chamar setState
     if (mounted) {
       setState(() {
         token = strToken;
+        fullname = strFullname;
       });
     }
   }
 
-  TextEditingController content = TextEditingController();
-  TextEditingController title = TextEditingController();
-  TextEditingController desc = TextEditingController();
+  TextEditingController cpf = TextEditingController();
 
   @override
   void dispose() {
-    content.dispose();
-    title.dispose();
-    desc.dispose();
+    cpf.dispose();
     super.dispose();
-  }
-
-  void toggleIcon() {
-    setState(() {
-      public = !public; // Alterna entre os ícones
-    });
   }
 
   Widget ManutentionErro() {
@@ -99,8 +95,8 @@ class _HomePageState extends State<HomePage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.person),
-                                SizedBox(
+                                const Icon(Icons.person),
+                                const SizedBox(
                                   width: 10,
                                 ),
                                 Column(
@@ -158,22 +154,23 @@ class _HomePageState extends State<HomePage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             InputTextField(
+                              textEditingController: cpf,
                               title: "CPF",
                               fcolor: nightColor,
                               fill: true,
                               textInputType: TextInputType.number,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 25,
                             ),
                             Builder(builder: (context) {
                               return GestureDetector(
                                 onTap: () {
-                                  (Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => SizedBox()),
-                                  ));
+                                  print(cpf);
+                                  AuthController().requests(  
+                                      cpf: cpf.text,
+                                      fullname: fullname.toString(),
+                                      resultReq: "Teste");
                                 },
                                 child: DefaultButton(
                                   text: "Procurar",
