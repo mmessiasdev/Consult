@@ -232,7 +232,8 @@ class Amount {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['discount'] = this.discount;
-    data['finalValue'] = this.finalValue;
+    data['response']['response']['billet']['amount']['finalValue'] =
+        this.finalValue;
     data['fine'] = this.fine;
     data['interest'] = this.interest;
     data['value'] = this.value;

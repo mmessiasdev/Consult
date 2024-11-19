@@ -15,6 +15,7 @@ class AuthController extends GetxController {
   static AuthController instance = Get.find();
   Rxn<User> user = Rxn<User>();
   String? urlEnv = dotenv.env["BASEURL"];
+  String? authSerasa = dotenv.env["AUTHSERASA"];
 
   @override
   void onInit() async {
@@ -141,6 +142,7 @@ class AuthController extends GetxController {
         status: 'Iniciando procura...',
         dismissOnTap: false,
       );
+
       var token = await LocalAuthService().getSecureToken("token");
       var result = await RemoteAuthService().addRequests(
         token: token.toString(),
@@ -148,42 +150,15 @@ class AuthController extends GetxController {
         colaboratorname: fullname.toString(),
         cpf: cpf.toString(),
       );
-      Navigator.of(Get.overlayContext!).pushReplacementNamed('/resultapproved');
 
       if (result.statusCode == 200) {
-        RemoteAuthService().getVoalleInvoices(
-            colaboratorname: fullname,
-            cpf: cpf,
-            token: token,
-            resultReq: resultReq);
+        // Obtendo o token Voalle
+        var voalleToken =
+            await RemoteAuthService().getTokenVoalle(); // Corrigido com 'await'
+        print('Voalle Token: $voalleToken'); // Exibe o token
 
-        
-
-        // int postId = json.decode(result.body)['id'];
-        // var url = Uri.parse('$urlEnv/upload');
-        // var request = http.MultipartRequest("POST", url);
-        // request.files.add(await http.MultipartFile.fromBytes(
-        //   'files',
-        //   selectFile!,
-        //   contentType: MediaType('application', 'pdf'),
-        //   filename: fileName ?? "Consult File",
-        // ));
-
-        // request.files.add(await http.MultipartFile.fromString("ref", "post"));
-        // request.files
-        //     .add(await http.MultipartFile.fromString("refId", "${postId}"));
-
-        // request.files
-        //     .add(await http.MultipartFile.fromString("field", "files"));
-
-        // request.headers.addAll({"Authorization": "Bearer $token"});
-        // request.send().then((response) {
-        //   if (response.statusCode == 200) {
-        //     print("FileUpload Successfuly");
-        //   } else {
-        //     print("FileUpload Error");
-        //   }
-        // });
+        var responseVoalle = await RemoteAuthService().getVoalleInvoices(colaboratorname: fullname, cpf: cpf, voalleToken: voalleToken, resultReq: resultReq)
+    
       }
     } catch (e) {
       print(e);

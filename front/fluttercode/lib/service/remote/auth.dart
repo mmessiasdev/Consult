@@ -1,7 +1,11 @@
 import 'dart:convert';
 import 'package:Consult/model/openvoalleinvoices.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 import 'package:http/http.dart' as http;
 
 // const url = String.fromEnvironment('BASEURL', defaultValue: '');
@@ -125,16 +129,33 @@ class RemoteAuthService {
   //   return response;
   // }
 
+  Future<dynamic> getTokenSerasa({
+    required String auth,
+  }) async {
+    var body = {
+      "Authorization": auth,
+    };
+    var response = await client.post(
+      Uri.parse('$url/security/iam/v1/client-identities/login'),
+      headers: {
+        "Content-Type": "application/json",
+        'ngrok-skip-browser-warning': "true"
+      },
+      body: jsonEncode(body),
+    );
+    return response;
+  }
+
   Future getVoalleInvoices({
     required String? colaboratorname,
     required String? cpf,
-    required String? token,
+    required String? voalleToken,
     required String? resultReq,
   }) async {
     List<Amount> listItens = [];
     var response = await client.get(
       Uri.parse(
-          '$voalleUrl/external/integrations/thirdparty/getopentitlesbytxid/$cpf'),
+          '$voalleUrl:45715/external/integrations/thirdparty/getopentitlesbytxid/$cpf'),
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $voalleToken",
@@ -143,10 +164,46 @@ class RemoteAuthService {
     );
     var body = jsonDecode(response.body);
     var itemCount = body['response'];
-    print('SUA RESPOSTA $itemCount');
     for (var i = 0; i < itemCount.length; i++) {
       listItens.add(Amount.fromJson(itemCount[i]));
     }
+    print(itemCount);
     return listItens;
+  }
+
+  Future<String> getTokenVoalle() async {
+    // URL da API
+    final url = Uri.parse('$voalleUrl:45700/connect/token');
+
+    // Dados do corpo da requisição
+    final body = {
+      'grant_type': 'client_credentials',
+      'scope': 'syngw',
+      'client_id': 'df0ee088-5f41-4baa-ba45-1454f23d0dcd',
+      'client_secret': '348af78b-4733-4d17-9912-fe44739bd2b0',
+      'syndata':
+          'TWpNMU9EYzVaakk1T0dSaU1USmxaalprWldFd00ySTFZV1JsTTJRMFptUT06WlhsS1ZHVlhOVWxpTTA0d1NXcHZhVnBZU25kTVdFNHdXVmRrY0dKdFkzbE1iVTUyWW0wMWJGa3pVbWxaVXpWcVlqSXdkVmx1U1dsTVEwcFVaVmMxUlZscFNUWkpiVkpwV2xjeGQwMUVRVEJPUkZwbVl6TlNhRm95YkhWYWVVbHpTV3RTYVZaSWJIZGFVMGsyU1c1Q2RtTXpVbTVqYlZaNlNXNHdQUT09OlpUaGtNak0xWWprMFl6bGlORE5tWkRnM01EbGtNalkyWXpBeE1HTTNNR1U9',
+    };
+
+    try {
+      // Enviando a requisição POST
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: body,
+      );
+
+      // Verificando se a requisição foi bem-sucedida
+      if (response.statusCode == 200) {
+        // Se a requisição for bem-sucedida, extrai o token
+        final data = jsonDecode(response.body);
+        return data['access_token']; // Retorna o token
+      } else {
+        // Se não for bem-sucedida, lança um erro
+        throw Exception('Falha ao obter o token: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Erro ao fazer a requisição: $e');
+    }
   }
 }
