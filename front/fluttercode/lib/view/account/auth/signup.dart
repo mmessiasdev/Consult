@@ -1,11 +1,11 @@
-import 'package:Benefeer/component/padding.dart';
-import 'package:Benefeer/component/widgets/title.dart';
-import 'package:Benefeer/controller/controllers.dart';
-import 'package:Benefeer/view/account/auth/signin.dart';
-import 'package:Benefeer/view/dashboard/screen.dart';
+import 'package:Consult/component/padding.dart';
+import 'package:Consult/component/widgets/title.dart';
+import 'package:Consult/controller/controllers.dart';
+import 'package:Consult/view/account/auth/signin.dart';
+import 'package:Consult/view/dashboard/screen.dart';
 import 'package:flutter/material.dart';
-import 'package:Benefeer/component/colors.dart';
-import 'package:Benefeer/component/texts.dart';
+import 'package:Consult/component/colors.dart';
+import 'package:Consult/component/texts.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);

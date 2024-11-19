@@ -1,16 +1,15 @@
-import 'package:Benefeer/component/colors.dart';
+import 'package:Consult/component/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:Benefeer/route/route.dart';
-import 'package:Benefeer/route/page.dart';
+import 'package:Consult/route/route.dart';
+import 'package:Consult/route/page.dart';
 import 'package:flutter/services.dart';
 // import 'package:firebase_core/firebase_core.dart';
 // import 'firebase_options.dart';
 
 Future main() async {
-  
   WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
   await dotenv.load(fileName: ".env");
   // await Firebase.initializeApp(

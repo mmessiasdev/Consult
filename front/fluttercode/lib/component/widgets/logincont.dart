@@ -1,13 +1,13 @@
-import 'package:Benefeer/component/defaultTitleButtom.dart';
-import 'package:Benefeer/component/colors.dart';
-import 'package:Benefeer/component/inputdefault.dart';
-import 'package:Benefeer/component/inputlight.dart';
-import 'package:Benefeer/component/padding.dart';
-import 'package:Benefeer/component/texts.dart';
-import 'package:Benefeer/component/widgets/title.dart';
-import 'package:Benefeer/controller/controllers.dart';
-import 'package:Benefeer/extention/string_extention.dart';
-import 'package:Benefeer/view/account/auth/signup.dart';
+import 'package:Consult/component/defaultTitleButtom.dart';
+import 'package:Consult/component/colors.dart';
+import 'package:Consult/component/inputdefault.dart';
+import 'package:Consult/component/inputlight.dart';
+import 'package:Consult/component/padding.dart';
+import 'package:Consult/component/texts.dart';
+import 'package:Consult/component/widgets/title.dart';
+import 'package:Consult/controller/controllers.dart';
+import 'package:Consult/extention/string_extention.dart';
+import 'package:Consult/view/account/auth/signup.dart';
 import 'package:flutter/material.dart';
 
 class LoginContent extends StatefulWidget {

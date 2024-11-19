@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:Benefeer/component/colors.dart';
-import 'package:Benefeer/component/texts.dart';
+import 'package:Consult/component/colors.dart';
+import 'package:Consult/component/texts.dart';
 
 class MainHeader extends StatelessWidget {
   MainHeader(
@@ -38,7 +38,7 @@ class MainHeader extends StatelessWidget {
               onTap: () => onClick!(),
               child: Icon(
                 icon,
-                size: 34,
+                size: 25,
               ),
             ),
           ],

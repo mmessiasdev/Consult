@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:Benefeer/component/colors.dart';
+import 'package:Consult/component/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -26,7 +26,7 @@ class PrimaryText extends StatelessWidget {
         overflow: over,
         textAlign: align ?? TextAlign.start,
         style: GoogleFonts.montserrat(
-          fontSize: 40,
+          fontSize: 30,
           textStyle: TextStyle(
               height: 1,
               color: color,

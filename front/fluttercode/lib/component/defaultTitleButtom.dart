@@ -1,7 +1,7 @@
-import 'package:Benefeer/component/defaultButton.dart';
+import 'package:Consult/component/defaultButton.dart';
 import 'package:flutter/material.dart';
-import 'package:Benefeer/component/colors.dart';
-import 'package:Benefeer/component/texts.dart';
+import 'package:Consult/component/colors.dart';
+import 'package:Consult/component/texts.dart';
 
 class DefaultTitleButton extends StatelessWidget {
   final String title;

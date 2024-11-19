@@ -1,12 +1,12 @@
-import 'package:Benefeer/component/defaultButton.dart';
-import 'package:Benefeer/component/padding.dart';
-import 'package:Benefeer/component/texts.dart';
-import 'package:Benefeer/component/widgets/infotext.dart';
-import 'package:Benefeer/component/widgets/title.dart';
-import 'package:Benefeer/service/local/auth.dart';
+import 'package:Consult/component/defaultButton.dart';
+import 'package:Consult/component/padding.dart';
+import 'package:Consult/component/texts.dart';
+import 'package:Consult/component/widgets/infotext.dart';
+import 'package:Consult/component/widgets/title.dart';
+import 'package:Consult/service/local/auth.dart';
 import 'package:flutter/material.dart';
-import 'package:Benefeer/component/widgets/header.dart';
-import 'package:Benefeer/controller/controllers.dart';
+import 'package:Consult/component/widgets/header.dart';
+import 'package:Consult/controller/controllers.dart';
 
 import '../../component/defaultTitleButtom.dart';
 import '../../component/colors.dart';

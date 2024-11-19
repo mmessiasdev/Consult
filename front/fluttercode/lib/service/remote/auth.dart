@@ -1,15 +1,7 @@
 import 'dart:convert';
-import 'package:Benefeer/model/categories.dart';
-import 'package:Benefeer/model/localstoriesverifiquedbuy.dart';
-import 'package:Benefeer/model/plans.dart';
-import 'package:Benefeer/model/localstores.dart';
-
-import 'package:Benefeer/model/postsnauth.dart';
-import 'package:Benefeer/model/profiles.dart';
-import 'package:Benefeer/model/stores.dart';
+import 'package:Consult/model/openvoalleinvoices.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:Benefeer/model/postFiles.dart';
 import 'package:http/http.dart' as http;
 
 // const url = String.fromEnvironment('BASEURL', defaultValue: '');
@@ -18,6 +10,8 @@ class RemoteAuthService {
   var client = http.Client();
   final storage = FlutterSecureStorage();
   final url = dotenv.env["BASEURL"];
+  final voalleUrl = dotenv.env["VOALLEBASEURL"];
+  final voalleToken = dotenv.env["VOALLETOKEN"];
 
   Future<dynamic> signUp(
       {required String email,
@@ -105,5 +99,54 @@ class RemoteAuthService {
       body: jsonEncode(body),
     );
     return response;
+  }
+
+  // Future getVoalleInvoices({
+  //   required String? colaboratorname,
+  //   required String? cpf,
+  //   required String? token,
+  //   required String? resultReq,
+  // }) async {
+  //   final body = {
+  //     "colaboratorname": colaboratorname,
+  //     "cpf": cpf,
+  //     "result": resultReq,
+  //   };
+  //   var response = await client.get(
+  //     Uri.parse(
+  //         '$voalleUrl/external/integrations/thirdparty/getopentitlesbytxid/$cpf'),
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "Authorization": "Bearer $voalleToken",
+  //       'ngrok-skip-browser-warning': "true"
+  //     },
+  //   );
+  //   print(response);
+  //   return response;
+  // }
+
+  Future getVoalleInvoices({
+    required String? colaboratorname,
+    required String? cpf,
+    required String? token,
+    required String? resultReq,
+  }) async {
+    List<Amount> listItens = [];
+    var response = await client.get(
+      Uri.parse(
+          '$voalleUrl/external/integrations/thirdparty/getopentitlesbytxid/$cpf'),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $voalleToken",
+        'ngrok-skip-browser-warning': "true"
+      },
+    );
+    var body = jsonDecode(response.body);
+    var itemCount = body['response'];
+    print('SUA RESPOSTA $itemCount');
+    for (var i = 0; i < itemCount.length; i++) {
+      listItens.add(Amount.fromJson(itemCount[i]));
+    }
+    return listItens;
   }
 }

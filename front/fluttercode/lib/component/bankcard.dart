@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:Benefeer/component/colors.dart';
-import 'package:Benefeer/component/texts.dart';
+import 'package:Consult/component/colors.dart';
+import 'package:Consult/component/texts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -41,7 +41,7 @@ class BankCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SubTextSized(
-                      text: "Benefeer", size: 30, fontweight: FontWeight.w600),
+                      text: "Consult", size: 30, fontweight: FontWeight.w600),
                   SubText(
                       text: "Seu cartão de benefícios", align: TextAlign.start, color: OffColor,),
                   const SizedBox(

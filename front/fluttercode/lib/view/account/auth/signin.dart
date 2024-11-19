@@ -1,12 +1,12 @@
-import 'package:Benefeer/component/defaultButton.dart';
-import 'package:Benefeer/component/padding.dart';
-import 'package:Benefeer/controller/auth.dart';
-import 'package:Benefeer/view/account/auth/signup.dart';
+import 'package:Consult/component/defaultButton.dart';
+import 'package:Consult/component/padding.dart';
+import 'package:Consult/controller/auth.dart';
+import 'package:Consult/view/account/auth/signup.dart';
 import 'package:flutter/material.dart';
-import 'package:Benefeer/component/colors.dart';
-import 'package:Benefeer/component/widgets/header.dart';
-import 'package:Benefeer/component/texts.dart';
-import 'package:Benefeer/component/inputdefault.dart';
+import 'package:Consult/component/colors.dart';
+import 'package:Consult/component/widgets/header.dart';
+import 'package:Consult/component/texts.dart';
+import 'package:Consult/component/inputdefault.dart';
 import 'package:get/get.dart';
 
 class SignInScreen extends StatefulWidget {

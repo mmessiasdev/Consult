@@ -1,15 +1,15 @@
-import 'package:Benefeer/component/buttons.dart';
-import 'package:Benefeer/component/containersLoading.dart';
-import 'package:Benefeer/component/inputdefault.dart';
-import 'package:Benefeer/component/widgets/header.dart';
-import 'package:Benefeer/controller/auth.dart';
-import 'package:Benefeer/view/account/account.dart';
-import 'package:Benefeer/view/result/result.dart';
+import 'package:Consult/component/buttons.dart';
+import 'package:Consult/component/containersLoading.dart';
+import 'package:Consult/component/inputdefault.dart';
+import 'package:Consult/component/widgets/header.dart';
+import 'package:Consult/controller/auth.dart';
+import 'package:Consult/view/account/account.dart';
+import 'package:Consult/view/result/result.dart';
 import 'package:flutter/material.dart';
-import 'package:Benefeer/component/colors.dart';
-import 'package:Benefeer/component/padding.dart';
-import 'package:Benefeer/component/texts.dart';
-import 'package:Benefeer/service/local/auth.dart';
+import 'package:Consult/component/colors.dart';
+import 'package:Consult/component/padding.dart';
+import 'package:Consult/component/texts.dart';
+import 'package:Consult/service/local/auth.dart';
 import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
@@ -151,36 +151,47 @@ class _HomePageState extends State<HomePage> {
                       child: Padding(
                         padding: defaultPadding,
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            InputTextField(
-                              textEditingController: cpf,
-                              title: "CPF",
-                              fcolor: nightColor,
-                              fill: true,
-                              textInputType: TextInputType.number,
-                            ),
-                            const SizedBox(
+                            SizedBox(
+                                width: 150,
+                                child: Image.asset(
+                                    'assets/images/logo/image.png')),
+                            SizedBox(
                               height: 25,
                             ),
-                            Builder(builder: (context) {
-                              return GestureDetector(
-                                onTap: () {
-                                  print(cpf);
-                                  AuthController().requests(  
-                                      cpf: cpf.text,
-                                      fullname: fullname.toString(),
-                                      resultReq: "Teste");
-                                },
-                                child: DefaultButton(
-                                  text: "Procurar",
-                                  padding: defaultPadding,
-                                  icon: Icons.next_plan,
-                                  color: SeventhColor,
-                                  colorText: lightColor,
+                            Column(
+                              children: [
+                                InputTextField(
+                                  textEditingController: cpf,
+                                  title: "CPF",
+                                  fcolor: nightColor,
+                                  fill: true,
+                                  textInputType: TextInputType.number,
                                 ),
-                              );
-                            }),
+                                const SizedBox(
+                                  height: 25,
+                                ),
+                                Builder(builder: (context) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      print(cpf);
+                                      AuthController().requests(
+                                          cpf: cpf.text,
+                                          fullname: fullname.toString(),
+                                          resultReq: "Teste");
+                                    },
+                                    child: DefaultButton(
+                                      text: "Procurar",
+                                      padding: defaultPadding,
+                                      icon: Icons.next_plan,
+                                      color: SeventhColor,
+                                      colorText: lightColor,
+                                    ),
+                                  );
+                                }),
+                              ],
+                            ),
                           ],
                         ),
                       ),

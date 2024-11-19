@@ -1,8 +1,8 @@
-import 'package:Benefeer/component/buttons.dart';
-import 'package:Benefeer/component/colors.dart';
-import 'package:Benefeer/component/padding.dart';
-import 'package:Benefeer/component/texts.dart';
-import 'package:Benefeer/controller/auth.dart';
+import 'package:Consult/component/buttons.dart';
+import 'package:Consult/component/colors.dart';
+import 'package:Consult/component/padding.dart';
+import 'package:Consult/component/texts.dart';
+import 'package:Consult/controller/auth.dart';
 import 'package:flutter/material.dart';
 
 class ResultApproved extends StatelessWidget {

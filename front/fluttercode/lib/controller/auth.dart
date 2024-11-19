@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:Benefeer/service/local/auth.dart';
-import 'package:Benefeer/service/remote/auth.dart';
+import 'package:Consult/service/local/auth.dart';
+import 'package:Consult/service/remote/auth.dart';
 import '../model/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -114,7 +114,7 @@ class AuthController extends GetxController {
             cpf: cpf,
           );
 
-          EasyLoading.showSuccess("Bem vindo ao Benefeer");
+          EasyLoading.showSuccess("Bem vindo ao Consult");
           Navigator.of(Get.overlayContext!).pushReplacementNamed('/');
         } else {
           EasyLoading.showError(
@@ -150,36 +150,44 @@ class AuthController extends GetxController {
       );
       Navigator.of(Get.overlayContext!).pushReplacementNamed('/resultapproved');
 
-      // if (result.statusCode == 200) {
-      //   int postId = json.decode(result.body)['id'];
-      //   var url = Uri.parse('$urlEnv/upload');
-      //   var request = http.MultipartRequest("POST", url);
-      //   request.files.add(await http.MultipartFile.fromBytes(
-      //     'files',
-      //     selectFile!,
-      //     contentType: MediaType('application', 'pdf'),
-      //     filename: fileName ?? "Benefeer File",
-      //   ));
+      if (result.statusCode == 200) {
+        RemoteAuthService().getVoalleInvoices(
+            colaboratorname: fullname,
+            cpf: cpf,
+            token: token,
+            resultReq: resultReq);
 
-      //   request.files.add(await http.MultipartFile.fromString("ref", "post"));
-      //   request.files
-      //       .add(await http.MultipartFile.fromString("refId", "${postId}"));
+        
 
-      //   request.files
-      //       .add(await http.MultipartFile.fromString("field", "files"));
+        // int postId = json.decode(result.body)['id'];
+        // var url = Uri.parse('$urlEnv/upload');
+        // var request = http.MultipartRequest("POST", url);
+        // request.files.add(await http.MultipartFile.fromBytes(
+        //   'files',
+        //   selectFile!,
+        //   contentType: MediaType('application', 'pdf'),
+        //   filename: fileName ?? "Consult File",
+        // ));
 
-      //   request.headers.addAll({"Authorization": "Bearer $token"});
-      //   request.send().then((response) {
-      //     if (response.statusCode == 200) {
-      //       print("FileUpload Successfuly");
-      //     } else {
-      //       print("FileUpload Error");
-      //     }
-      //   });
-      // }
+        // request.files.add(await http.MultipartFile.fromString("ref", "post"));
+        // request.files
+        //     .add(await http.MultipartFile.fromString("refId", "${postId}"));
+
+        // request.files
+        //     .add(await http.MultipartFile.fromString("field", "files"));
+
+        // request.headers.addAll({"Authorization": "Bearer $token"});
+        // request.send().then((response) {
+        //   if (response.statusCode == 200) {
+        //     print("FileUpload Successfuly");
+        //   } else {
+        //     print("FileUpload Error");
+        //   }
+        // });
+      }
     } catch (e) {
       print(e);
-      EasyLoading.showError('Alguma coisa deu errado.');
+      EasyLoading.showError('Estamos passando por uma manutenção.');
     } finally {
       EasyLoading.dismiss();
     }
@@ -209,7 +217,7 @@ class AuthController extends GetxController {
       //     'files',
       //     selectFile!,
       //     contentType: MediaType('application', 'pdf'),
-      //     filename: fileName ?? "Benefeer File",
+      //     filename: fileName ?? "Consult File",
       //   ));
 
       //   request.files.add(await http.MultipartFile.fromString("ref", "post"));

@@ -1,6 +1,6 @@
-import 'package:Benefeer/component/colors.dart';
-import 'package:Benefeer/component/padding.dart';
-import 'package:Benefeer/component/texts.dart';
+import 'package:Consult/component/colors.dart';
+import 'package:Consult/component/padding.dart';
+import 'package:Consult/component/texts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
 

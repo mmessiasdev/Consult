@@ -1,8 +1,8 @@
-import 'package:Benefeer/route/route.dart';
-import 'package:Benefeer/view/account/auth/signin.dart';
-import 'package:Benefeer/view/dashboard/binding.dart';
-import 'package:Benefeer/view/dashboard/screen.dart';
-import 'package:Benefeer/view/result/result.dart';
+import 'package:Consult/route/route.dart';
+import 'package:Consult/view/account/auth/signin.dart';
+import 'package:Consult/view/dashboard/binding.dart';
+import 'package:Consult/view/dashboard/screen.dart';
+import 'package:Consult/view/result/result.dart';
 import 'package:get/get.dart';
 
 class AppPage {

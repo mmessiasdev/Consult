@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:Benefeer/component/colors.dart';
-import 'package:Benefeer/component/texts.dart';
+import 'package:Consult/component/colors.dart';
+import 'package:Consult/component/texts.dart';
 
 class ThumbPost extends StatelessWidget {
   String title;

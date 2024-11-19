@@ -1,4 +1,4 @@
-import 'package:Benefeer/controller/auth.dart';
+import 'package:Consult/controller/auth.dart';
 
 import 'dashboard.dart';
 
