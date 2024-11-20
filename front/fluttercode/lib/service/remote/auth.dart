@@ -146,28 +146,56 @@ class RemoteAuthService {
     return response;
   }
 
-  Future getVoalleInvoices({
+  Future<List<Amount>> getVoalleInvoices({
     required String? colaboratorname,
     required String? cpf,
     required String? voalleToken,
     required String? resultReq,
   }) async {
     List<Amount> listItens = [];
-    var response = await client.get(
-      Uri.parse(
-          '$voalleUrl:45715/external/integrations/thirdparty/getopentitlesbytxid/$cpf'),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $voalleToken",
-        'ngrok-skip-browser-warning': "true"
-      },
-    );
-    var body = jsonDecode(response.body);
-    var itemCount = body['response'];
-    for (var i = 0; i < itemCount.length; i++) {
-      listItens.add(Amount.fromJson(itemCount[i]));
+
+    try {
+      // Realiza a requisição GET
+      var response = await client.get(
+        Uri.parse(
+            '$voalleUrl:45715/external/integrations/thirdparty/getopentitlesbytxid/$cpf'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $voalleToken",
+          'ngrok-skip-browser-warning': "true"
+        },
+      );
+
+      // Verifica se a resposta foi bem-sucedida
+      if (response.statusCode == 200) {
+        var body = jsonDecode(response.body);
+        var itemCount = body['response'];
+        print(itemCount);
+
+        // Verifica se há itens no 'itemCount'
+        if (itemCount != null && itemCount.isNotEmpty) {
+          // Se houver itens, adiciona na lista
+          for (var i = 0; i < itemCount.length; i++) {
+            listItens.add(Amount.fromJson(itemCount[i]));
+          }
+          Navigator.of(Get.overlayContext!)
+              .pushReplacementNamed('/resultnotapproved');
+        } else {
+          Navigator.of(Get.overlayContext!)
+              .pushReplacementNamed('/resultapproved');
+          // Se a lista estiver vazia, exibe uma mensagem no console
+          print('Nenhum item encontrado para o CPF: $cpf');
+        }
+      } else {
+        // Se a resposta não for 200 (sucesso), lança uma exceção
+        throw Exception('Erro ao obter dados: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Trata qualquer erro na requisição ou no processo
+      print('Erro na requisição ou ao processar os dados: $e');
     }
-    print(itemCount);
+
+    // Retorna a lista (pode estar vazia)
     return listItens;
   }
 
