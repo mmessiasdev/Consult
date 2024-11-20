@@ -1,13 +1,23 @@
 import 'package:Consult/component/buttons.dart';
 import 'package:Consult/component/colors.dart';
+import 'package:Consult/component/containersLoading.dart';
 import 'package:Consult/component/padding.dart';
 import 'package:Consult/component/texts.dart';
 import 'package:Consult/controller/auth.dart';
+import 'package:Consult/model/openvoalleinvoices.dart';
+import 'package:Consult/service/local/auth.dart';
+import 'package:Consult/service/remote/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-class ResultApproved extends StatelessWidget {
+class ResultApproved extends StatefulWidget {
   const ResultApproved({super.key});
 
+  @override
+  State<ResultApproved> createState() => _ResultApprovedState();
+}
+
+class _ResultApprovedState extends State<ResultApproved> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -25,7 +35,7 @@ class ResultApproved extends StatelessWidget {
                       height: 50,
                     ),
                     SecundaryText(
-                        text: "Clinte Aprovado!",
+                        text: "Cliente Aprovado!",
                         color: nightColor,
                         align: TextAlign.center),
                     SizedBox(
@@ -60,8 +70,56 @@ class ResultApproved extends StatelessWidget {
   }
 }
 
-class ResultNotApproved extends StatelessWidget {
+class ResultNotApproved extends StatefulWidget {
   const ResultNotApproved({super.key});
+
+  @override
+  State<ResultNotApproved> createState() => _ResultNotApprovedState();
+}
+
+class _ResultNotApprovedState extends State<ResultNotApproved> {
+  var client = http.Client();
+  String screen = "online";
+  String? token;
+  String? fname;
+  String? fullname;
+
+  var id;
+
+  bool public = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getString();
+  }
+
+  void getString() async {
+    var strToken = await LocalAuthService().getSecureToken("token");
+    var strFullname = await LocalAuthService().getFullName("fullname");
+
+    // Verifique se o widget ainda está montado antes de chamar setState
+    if (mounted) {
+      setState(() {
+        token = strToken;
+        fullname = strFullname;
+      });
+    }
+  }
+
+  TextEditingController cpf = TextEditingController();
+
+  @override
+  void dispose() {
+    cpf.dispose();
+    super.dispose();
+  }
+
+  Widget ManutentionErro() {
+    return const Text(
+      "Estamos passando por uma manutenção. Entre novamente mais tarde!",
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +148,9 @@ class ResultNotApproved extends StatelessWidget {
                       Icons.block,
                       color: nightColor,
                       size: 100,
+                    ),
+                    SizedBox(
+                      height: 15,
                     ),
                     SizedBox(
                       height: 15,

@@ -210,6 +210,8 @@ class Amount {
   int? fine;
   double? interest;
   int? value;
+  String? status;
+
   int? originalValue;
 
   Amount(
@@ -218,6 +220,7 @@ class Amount {
       this.fine,
       this.interest,
       this.value,
+      this.status,
       this.originalValue});
 
   Amount.fromJson(Map<String, dynamic> json) {
@@ -226,6 +229,7 @@ class Amount {
     fine = json['fine'];
     interest = json['interest'];
     value = json['value'];
+    status = json['billet']['status'];
     originalValue = json['originalValue'];
   }
 
@@ -238,6 +242,7 @@ class Amount {
     data['interest'] = this.interest;
     data['value'] = this.value;
     data['originalValue'] = this.originalValue;
+    data['billet']['status'] = this.status;
     return data;
   }
 }

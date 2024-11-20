@@ -105,30 +105,6 @@ class RemoteAuthService {
     return response;
   }
 
-  // Future getVoalleInvoices({
-  //   required String? colaboratorname,
-  //   required String? cpf,
-  //   required String? token,
-  //   required String? resultReq,
-  // }) async {
-  //   final body = {
-  //     "colaboratorname": colaboratorname,
-  //     "cpf": cpf,
-  //     "result": resultReq,
-  //   };
-  //   var response = await client.get(
-  //     Uri.parse(
-  //         '$voalleUrl/external/integrations/thirdparty/getopentitlesbytxid/$cpf'),
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       "Authorization": "Bearer $voalleToken",
-  //       'ngrok-skip-browser-warning': "true"
-  //     },
-  //   );
-  //   print(response);
-  //   return response;
-  // }
-
   Future<dynamic> getTokenSerasa({
     required String auth,
   }) async {
@@ -147,13 +123,11 @@ class RemoteAuthService {
   }
 
   Future<List<Amount>> getVoalleInvoices({
-    required String? colaboratorname,
     required String? cpf,
     required String? voalleToken,
     required String? resultReq,
   }) async {
     List<Amount> listItens = [];
-
     try {
       // Realiza a requisição GET
       var response = await client.get(
@@ -170,21 +144,36 @@ class RemoteAuthService {
       if (response.statusCode == 200) {
         var body = jsonDecode(response.body);
         var itemCount = body['response'];
-        print(itemCount);
 
         // Verifica se há itens no 'itemCount'
         if (itemCount != null && itemCount.isNotEmpty) {
-          // Se houver itens, adiciona na lista
+          // Se houver itens, faz o processamento e verifica o status
           for (var i = 0; i < itemCount.length; i++) {
-            listItens.add(Amount.fromJson(itemCount[i]));
+            var item = itemCount[i];
+            var status = item['billet']['status']; // Obtém o status do boleto
+            print(status);
+
+            // Verifica o status e redireciona para a tela apropriada
+            if (status == "Vencida") {
+              Navigator.of(Get.overlayContext!)
+                  .pushReplacementNamed('/resultnotapproved');
+              print('Status Vencido - Redirecionando para tela não aprovado');
+              break; // Para a execução se o status for "Vencido"
+            } else if (status == "Em aberto") {
+              Navigator.of(Get.overlayContext!)
+                  .pushReplacementNamed('/resultapproved');
+              print('Status Em aberto - Redirecionando para tela aprovado');
+              break; // Para a execução se o status for "Em aberto"
+            }
+
+            // Se o status não for "Vencido" nem "Em aberto", apenas adiciona na lista
+            listItens.add(Amount.fromJson(item));
           }
-          Navigator.of(Get.overlayContext!)
-              .pushReplacementNamed('/resultnotapproved');
         } else {
+          // Se não houver itens, redireciona para tela de aprovado
           Navigator.of(Get.overlayContext!)
               .pushReplacementNamed('/resultapproved');
-          // Se a lista estiver vazia, exibe uma mensagem no console
-          print('Nenhum item encontrado para o CPF: $cpf');
+          print('Nenhum item encontrado ou status não especificado');
         }
       } else {
         // Se a resposta não for 200 (sucesso), lança uma exceção

@@ -156,14 +156,11 @@ class AuthController extends GetxController {
         var voalleToken =
             await RemoteAuthService().getTokenVoalle(); // Corrigido com 'await'
         print('Voalle Token: $voalleToken'); // Exibe o token
-
         var responseVoalle = await RemoteAuthService().getVoalleInvoices(
-            colaboratorname: fullname,
-            cpf: cpf,
-            voalleToken: voalleToken,
-            resultReq: resultReq);
-            
-             
+          cpf: cpf,
+          voalleToken: voalleToken,
+          resultReq: resultReq,
+        );
       }
     } catch (e) {
       print(e);
