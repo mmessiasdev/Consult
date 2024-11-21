@@ -12,9 +12,13 @@ import 'package:http/http.dart' as http;
 class RemoteAuthService {
   var client = http.Client();
   final storage = FlutterSecureStorage();
+
   final url = dotenv.env["BASEURL"];
+
   final voalleUrl = dotenv.env["VOALLEBASEURL"];
   final voalleToken = dotenv.env["VOALLETOKEN"];
+
+  final serasaUrl = dotenv.env["SERASABASEURL"];
 
   Future<dynamic> signUp(
       {required String email,
@@ -104,23 +108,6 @@ class RemoteAuthService {
     return response;
   }
 
-  Future<dynamic> getTokenSerasa({
-    required String auth,
-  }) async {
-    var body = {
-      "Authorization": auth,
-    };
-    var response = await client.post(
-      Uri.parse('$url/security/iam/v1/client-identities/login'),
-      headers: {
-        "Content-Type": "application/json",
-        'ngrok-skip-browser-warning': "true"
-      },
-      body: jsonEncode(body),
-    );
-    return response;
-  }
-
   Future<List<Amount>> getVoalleInvoices({
     required String? cpf,
     required String? voalleToken,
@@ -141,13 +128,38 @@ class RemoteAuthService {
       // Verifica se a resposta foi bem-sucedida
       if (response.statusCode == 200) {
         var body = jsonDecode(response.body);
-        var itemCount = body['response'];
+        var itemCountResponse = body['response'];
+        var messages = body['messages']; // Extrai as mensagens da resposta
 
-        // Verifica se há itens no 'itemCount'
-        if (itemCount != null && itemCount.isNotEmpty) {
-          // Se houver itens, processa cada um
-          for (var i = 0; i < itemCount.length; i++) {
-            var item = itemCount[i];
+        // Verifica se existe alguma mensagem
+        if (messages != null && messages.isNotEmpty) {
+          // Verifica as mensagens específicas
+          for (var message in messages) {
+            if (message['message'] == "Cliente não possui títulos em aberto.") {
+              Navigator.of(Get.overlayContext!)
+                  .pushReplacementNamed('/resultapproved');
+              print(
+                  'Mensagem: Cliente não possui títulos em aberto. - Redirecionando para tela de aprovado');
+              return listItens; // Retorna a lista (pode estar vazia) e interrompe a execução
+            } else if (message['message'] == "Registro não encontrado.") {
+              // Chama o método para validação do token
+              // await getTokenSerasa(
+              //   username: '673f3b7ccc4c7437bf49811b',
+              //   password: 'cd6d7cf7ikTK0k-6d95-4a12-b168-aa4142742622',
+              // );
+              // Navigator.of(Get.overlayContext!)
+              //     .pushReplacementNamed('/validacaoToken');
+              print(
+                  'Mensagem: Registro não encontrado. - Redirecionando para tela de validação de token');
+              return listItens; // Retorna a lista e interrompe a execução
+            }
+          }
+        }
+
+        // Se a resposta contiver itens válidos
+        if (itemCountResponse != null && itemCountResponse.isNotEmpty) {
+          for (var i = 0; i < itemCountResponse.length; i++) {
+            var item = itemCountResponse[i];
             var status = item['billet']['status']; // Obtém o status do boleto
 
             // Verifica o status e redireciona para a tela apropriada
@@ -220,6 +232,43 @@ class RemoteAuthService {
       }
     } catch (e) {
       throw Exception('Erro ao fazer a requisição: $e');
+    }
+  }
+
+  Future<String> getTokenSerasa({
+    required String username,
+    required String password,
+  }) async {
+    final serasaUrl = 'https://uat-api.serasaexperian.com.br';
+
+    // Codificar o username:password em Base64
+    final credentials = '$username:$password';
+    final encodedCredentials = base64Encode(utf8.encode(credentials));
+
+    // Fazer a requisição POST com o cabeçalho de Autenticação Básica
+    var response = await http.post(
+      Uri.parse('$serasaUrl/security/iam/v1/client-identities/login'),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Basic $encodedCredentials",
+        'ngrok-skip-browser-warning': "true",
+      },
+      body: jsonEncode({}),
+    );
+
+    // Verificar o status da resposta
+    if (response.statusCode == 200) {
+      // Decodificar o corpo da resposta JSON
+      var responseData = jsonDecode(response.body);
+
+      // Extrair o accessToken
+      String accessToken = responseData['accessToken'];
+
+      return accessToken;
+    } else {
+      // Caso o código de status não seja 200, lançar um erro
+      throw Exception(
+          'Falha ao obter token. Código de status: ${response.statusCode}');
     }
   }
 }
