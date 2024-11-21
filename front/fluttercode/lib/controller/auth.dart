@@ -149,9 +149,13 @@ class AuthController extends GetxController {
         cpf: cpf.toString(),
       );
 
-      await LocalAuthService().storeToken(cpf);
+      await LocalAuthService().storeCpfClient(cpf);
 
-      print(cpf);
+      var cpfClient = LocalAuthService().getCpfClient("cpfClient");
+
+      print(cpfClient.toString());
+      print(result.statusCode);
+      print(token);
 
       if (result.statusCode == 200) {
         // Obtendo o token Voalle

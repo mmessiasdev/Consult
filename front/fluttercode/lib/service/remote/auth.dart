@@ -151,7 +151,7 @@ class RemoteAuthService {
             var status = item['billet']['status']; // Obtém o status do boleto
 
             // Verifica o status e redireciona para a tela apropriada
-            if (status == "Vencido") {
+            if (status == "Vencida") {
               Navigator.of(Get.overlayContext!)
                   .pushReplacementNamed('/resultnotapproved');
               print('Status Vencido - Redirecionando para tela não aprovado');

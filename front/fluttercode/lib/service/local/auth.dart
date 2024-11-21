@@ -11,6 +11,14 @@ class LocalAuthService {
     return await _storage.read(key: "token");
   }
 
+  Future<void> storeCpfClient(String CpfClient) async {
+    await _storage.write(key: "cpfClient", value: CpfClient);
+  }
+
+  Future<String?> getCpfClient(String CpfClient) async {
+    return await _storage.read(key: "cpfClient");
+  }
+
   Future storeAccount({
     required String email,
     required String fullname,
