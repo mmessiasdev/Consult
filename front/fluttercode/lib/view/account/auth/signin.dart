@@ -62,7 +62,7 @@ class _SignInScreenState extends State<SignInScreen> {
           children: [
             Padding(
               padding: defaultPaddingHorizon,
-              child: MainHeader(title: "Consult", onClick: () {}),
+              child: MainHeader(title: "Connect Consult", onClick: () {}),
             ),
             Expanded(
               child: PageView.builder(

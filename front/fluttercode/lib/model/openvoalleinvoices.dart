@@ -211,6 +211,7 @@ class Amount {
   double? interest;
   int? value;
   String? status;
+  String? expirationDate;
 
   int? originalValue;
 
@@ -218,6 +219,7 @@ class Amount {
       {this.discount,
       this.finalValue,
       this.fine,
+      this.expirationDate,
       this.interest,
       this.value,
       this.status,
@@ -230,7 +232,8 @@ class Amount {
     interest = json['interest'];
     value = json['value'];
     status = json['billet']['status'];
-    originalValue = json['originalValue'];
+    status = json['billet']['expirationDate'];
+    expirationDate = json['originalValue'];
   }
 
   Map<String, dynamic> toJson() {
@@ -243,6 +246,7 @@ class Amount {
     data['value'] = this.value;
     data['originalValue'] = this.originalValue;
     data['billet']['status'] = this.status;
+    data['billet']['expirationDate'] = this.expirationDate;
     return data;
   }
 }

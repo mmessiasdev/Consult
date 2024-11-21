@@ -103,7 +103,6 @@ class AuthController extends GetxController {
           var email = userData['email'];
           var id = userData['id'];
           var fullname = userData['fullname'];
-          var cpf = userData['user']['username'];
 
           user.value = userFromJson(userResult.body);
 
@@ -112,7 +111,6 @@ class AuthController extends GetxController {
             id: id,
             email: email,
             fullname: fullname,
-            cpf: cpf,
           );
 
           EasyLoading.showSuccess("Bem vindo ao Consult");
@@ -151,6 +149,10 @@ class AuthController extends GetxController {
         cpf: cpf.toString(),
       );
 
+      await LocalAuthService().storeToken(cpf);
+
+      print(cpf);
+
       if (result.statusCode == 200) {
         // Obtendo o token Voalle
         var voalleToken =
@@ -159,7 +161,6 @@ class AuthController extends GetxController {
         var responseVoalle = await RemoteAuthService().getVoalleInvoices(
           cpf: cpf,
           voalleToken: voalleToken,
-          resultReq: resultReq,
         );
       }
     } catch (e) {

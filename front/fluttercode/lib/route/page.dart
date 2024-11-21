@@ -17,7 +17,7 @@ class AppPage {
     ),
     GetPage(
       name: AppRoute.ResultNotApproved,
-      page: () => const ResultNotApproved(),
+      page: () => const ResultNotApprovedOpenInvoices(),
     ),
     GetPage(
       name: AppRoute.dashboard,

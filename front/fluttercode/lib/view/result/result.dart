@@ -31,14 +31,14 @@ class _ResultApprovedState extends State<ResultApproved> {
                 Column(
                   children: [
                     Image.asset('assets/images/illustrator/illustrator1.png'),
-                    SizedBox(
+                    const SizedBox(
                       height: 50,
                     ),
                     SecundaryText(
                         text: "Cliente Aprovado!",
                         color: nightColor,
                         align: TextAlign.center),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     Icon(
@@ -48,7 +48,7 @@ class _ResultApprovedState extends State<ResultApproved> {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 40,
                 ),
               ],
@@ -70,14 +70,16 @@ class _ResultApprovedState extends State<ResultApproved> {
   }
 }
 
-class ResultNotApproved extends StatefulWidget {
-  const ResultNotApproved({super.key});
+class ResultNotApprovedOpenInvoices extends StatefulWidget {
+  const ResultNotApprovedOpenInvoices({super.key});
 
   @override
-  State<ResultNotApproved> createState() => _ResultNotApprovedState();
+  State<ResultNotApprovedOpenInvoices> createState() =>
+      _ResultNotApprovedOpenInvoicesState();
 }
 
-class _ResultNotApprovedState extends State<ResultNotApproved> {
+class _ResultNotApprovedOpenInvoicesState
+    extends State<ResultNotApprovedOpenInvoices> {
   var client = http.Client();
   String screen = "online";
   String? token;
@@ -121,6 +123,8 @@ class _ResultNotApprovedState extends State<ResultNotApproved> {
     );
   }
 
+  var voalleToken = RemoteAuthService().getTokenVoalle();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -134,14 +138,14 @@ class _ResultNotApprovedState extends State<ResultNotApproved> {
                 Column(
                   children: [
                     Image.asset('assets/images/illustrator/illustrator2.png'),
-                    SizedBox(
+                    const SizedBox(
                       height: 50,
                     ),
                     SecundaryText(
                         text: "Pendente",
                         color: nightColor,
                         align: TextAlign.center),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     Icon(
@@ -149,10 +153,62 @@ class _ResultNotApprovedState extends State<ResultNotApproved> {
                       color: nightColor,
                       size: 100,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
-                    SizedBox(
+                    FutureBuilder<List<Amount>>(
+                      future: RemoteAuthService().getVoalleInvoices(
+                        cpf: cpf.text,
+                        voalleToken: voalleToken.toString(),
+                      ),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done &&
+                            snapshot.hasData) {
+                          if (snapshot.data!.isEmpty) {
+                            return const Center(
+                              child:
+                                  Text("Nenhuma loja disponível no momento."),
+                            );
+                          } else {
+                            // Exibe uma lista dos itens com expirationDate
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: snapshot
+                                  .data!.length, // Quantidade de itens na lista
+                              itemBuilder: (context, index) {
+                                var renders = snapshot.data![index];
+                                // Aqui você pode acessar os dados do objeto 'renders', como 'status', 'expirationDate', etc.
+                                return Padding(
+                                  padding: defaultPadding,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                          'Status: ${renders.status}'), // Exibindo o status
+                                      Text(
+                                          'Vencimento: ${renders.expirationDate}'), // Exibindo a data de vencimento
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          }
+                        } else if (snapshot.hasError) {
+                          return WidgetLoading();
+                        }
+                        return SizedBox(
+                          height: 300,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: nightColor,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(
                       height: 15,
                     ),
                     SecundaryText(
@@ -161,7 +217,7 @@ class _ResultNotApprovedState extends State<ResultNotApproved> {
                         align: TextAlign.center),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 40,
                 ),
               ],

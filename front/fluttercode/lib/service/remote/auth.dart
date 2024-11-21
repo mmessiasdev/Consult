@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:Consult/model/openvoalleinvoices.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
@@ -125,7 +124,6 @@ class RemoteAuthService {
   Future<List<Amount>> getVoalleInvoices({
     required String? cpf,
     required String? voalleToken,
-    required String? resultReq,
   }) async {
     List<Amount> listItens = [];
     try {
@@ -147,14 +145,13 @@ class RemoteAuthService {
 
         // Verifica se há itens no 'itemCount'
         if (itemCount != null && itemCount.isNotEmpty) {
-          // Se houver itens, faz o processamento e verifica o status
+          // Se houver itens, processa cada um
           for (var i = 0; i < itemCount.length; i++) {
             var item = itemCount[i];
             var status = item['billet']['status']; // Obtém o status do boleto
-            print(status);
 
             // Verifica o status e redireciona para a tela apropriada
-            if (status == "Vencida") {
+            if (status == "Vencido") {
               Navigator.of(Get.overlayContext!)
                   .pushReplacementNamed('/resultnotapproved');
               print('Status Vencido - Redirecionando para tela não aprovado');
@@ -166,8 +163,10 @@ class RemoteAuthService {
               break; // Para a execução se o status for "Em aberto"
             }
 
-            // Se o status não for "Vencido" nem "Em aberto", apenas adiciona na lista
-            listItens.add(Amount.fromJson(item));
+            // Coleta todos os itens com 'expirationDate'
+            if (item['billet']['expirationDate'] != null) {
+              listItens.add(Amount.fromJson(item));
+            }
           }
         } else {
           // Se não houver itens, redireciona para tela de aprovado

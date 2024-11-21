@@ -40,10 +40,13 @@ class _HomePageState extends State<HomePage> {
   void getString() async {
     var strToken = await LocalAuthService().getSecureToken("token");
     var strFullname = await LocalAuthService().getFullName("fullname");
+    // var strCpf = await LocalAuthService().getCpf("cpf");
 
     // Verifique se o widget ainda está montado antes de chamar setState
     if (mounted) {
       setState(() {
+        // Caso strCpf seja null, passamos uma string vazia
+        // cpf.text = strCpf ?? ''; // Usa uma string vazia se strCpf for null
         token = strToken;
         fullname = strFullname;
       });
