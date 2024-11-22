@@ -2,27 +2,45 @@ import 'package:Consult/route/route.dart';
 import 'package:Consult/view/account/auth/signin.dart';
 import 'package:Consult/view/dashboard/binding.dart';
 import 'package:Consult/view/dashboard/screen.dart';
+import 'package:Consult/view/result/lowscore.dart';
+import 'package:Consult/view/result/negative.dart';
+import 'package:Consult/view/result/nonegative.dart';
 import 'package:Consult/view/result/result.dart';
 import 'package:get/get.dart';
 
 class AppPage {
   static var list = [
     GetPage(
+      name: AppRoute.dashboard,
+      page: () => const DashboardScreen(),
+      binding: DashboardBinding(),
+    ),
+    GetPage(
       name: AppRoute.loginIn,
       page: () => const SignInScreen(),
     ),
     GetPage(
-      name: AppRoute.ResultApproved,
+      name: AppRoute.ApprovedVoalle,
       page: () => const ResultApproved(),
     ),
     GetPage(
-      name: AppRoute.ResultNotApproved,
+      name: AppRoute.NotApprovedVoalle,
       page: () => const ResultNotApprovedOpenInvoices(),
     ),
     GetPage(
-      name: AppRoute.dashboard,
-      page: () => const DashboardScreen(),
-      binding: DashboardBinding(),
+      name: AppRoute.LowScore,
+      page: () => const LowScoreScreen(),
+    ),    GetPage(
+      name: AppRoute.NegativeClient,
+      page: () => const NegativeScreen(),
+    ),
+    GetPage(
+      name: AppRoute.NoNegative,
+      page: () => const NoNegativeScreen(),
+    ),
+    GetPage(
+      name: AppRoute.NegativeHighScore,
+      page: () => const ResultApproved(),
     ),
   ];
 }

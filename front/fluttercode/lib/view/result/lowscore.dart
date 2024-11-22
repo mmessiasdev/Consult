@@ -10,83 +10,51 @@ import 'package:Consult/service/remote/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-class ResultApproved extends StatefulWidget {
-  const ResultApproved({super.key});
+class LowScoreScreen extends StatefulWidget {
+  const LowScoreScreen({super.key});
 
   @override
-  State<ResultApproved> createState() => _ResultApprovedState();
+  State<LowScoreScreen> createState() => _LowScoreScreenState();
 }
 
-class _ResultApprovedState extends State<ResultApproved> {
+class _LowScoreScreenState extends State<LowScoreScreen> {
+  var client = http.Client();
+  String screen = "online";
+  String? token;
+  String? fname;
+  String? fullname;
+
+  var id;
+
+  bool public = false;
+
   @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-        child: Padding(
-      padding: defaultPadding,
-      child: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              children: [
-                Column(
-                  children: [
-                    Image.asset('assets/images/illustrator/illustrator1.png'),
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    SecundaryText(
-                        text: "Cliente Aprovado! Já é da base",
-                        color: nightColor,
-                        align: TextAlign.start),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    SubTextSized(
-                        text: 'Não possui faturas vencidas.',
-                        size: 20,
-                        fontweight: FontWeight.w800),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Icon(
-                      Icons.check_circle_outlined,
-                      color: SeventhColor,
-                      size: 100,
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-              ],
-            ),
-          ),
-          GestureDetector(
-            onTap: () {
-              AuthController().finishRequest();
-            },
-            child: DefaultButton(
-              text: "Finalizar",
-              padding: defaultPadding,
-              color: PrimaryColor,
-            ),
-          ),
-        ],
-      ),
-    ));
+  void initState() {
+    super.initState();
+    getString();
   }
-}
 
-class ResultNotApprovedOpenInvoices extends StatefulWidget {
-  const ResultNotApprovedOpenInvoices({super.key});
+  void getString() async {
+    var strToken = await LocalAuthService().getSecureToken("token");
+    var strFullname = await LocalAuthService().getFullName("fullname");
+
+    // Verifique se o widget ainda está montado antes de chamar setState
+    if (mounted) {
+      setState(() {
+        token = strToken;
+        fullname = strFullname;
+      });
+    }
+  }
+
+  TextEditingController cpf = TextEditingController();
 
   @override
-  State<ResultNotApprovedOpenInvoices> createState() =>
-      _ResultNotApprovedOpenInvoicesState();
-}
+  void dispose() {
+    cpf.dispose();
+    super.dispose();
+  }
 
-class _ResultNotApprovedOpenInvoicesState
-    extends State<ResultNotApprovedOpenInvoices> {
   Widget ManutentionErro() {
     return const Text(
       "Estamos passando por uma manutenção. Entre novamente mais tarde!",
@@ -115,9 +83,7 @@ class _ResultNotApprovedOpenInvoicesState
                         text: "Pendente",
                         color: nightColor,
                         align: TextAlign.start),
-                    SizedBox(
-                      height: 10,
-                    ),
+                        SizedBox(height: 10,),
                     const SizedBox(
                       height: 15,
                     ),
@@ -133,14 +99,13 @@ class _ResultNotApprovedOpenInvoicesState
                       height: 15,
                     ),
                     SecundaryText(
-                        text: "Cliente da base. Faturas em vencimento",
+                        text:
+                            "CPF cadastrado não possui Score suficiente no Serasa (abaixo de 300).",
                         color: nightColor,
                         align: TextAlign.start),
-                    SizedBox(
-                      height: 10,
-                    ),
+                        SizedBox(height: 10,),
                     SubTextSized(
-                        text: 'Necessário pagamento das faturas em aberto.',
+                        text: 'Mediante a pagamento da taxa de 400 reais.',
                         size: 20,
                         fontweight: FontWeight.w800),
                   ],

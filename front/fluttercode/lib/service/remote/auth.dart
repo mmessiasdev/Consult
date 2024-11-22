@@ -139,7 +139,7 @@ class RemoteAuthService {
           for (var message in messages) {
             if (message['message'] == "Cliente não possui títulos em aberto.") {
               Navigator.of(Get.overlayContext!)
-                  .pushReplacementNamed('/resultapproved');
+                  .pushReplacementNamed('/resultapprovedvoalle');
               print(
                   'Mensagem: Cliente não possui títulos em aberto. - Redirecionando para tela de aprovado');
 
@@ -174,7 +174,7 @@ class RemoteAuthService {
               break; // Para a execução se o status for "Vencida"
             } else if (status == "Em aberto") {
               Navigator.of(Get.overlayContext!)
-                  .pushReplacementNamed('/resultapproved');
+                  .pushReplacementNamed('/resultapprovedvoalle');
               print('Status Em aberto - Redirecionando para tela aprovado');
               break; // Para a execução se o status for "Em aberto"
             }
@@ -187,7 +187,7 @@ class RemoteAuthService {
         } else {
           // Se não houver itens, redireciona para tela de aprovado
           Navigator.of(Get.overlayContext!)
-              .pushReplacementNamed('/resultapproved');
+              .pushReplacementNamed('/resultapprovedvoalle');
           print('Nenhum item encontrado ou status não especificado');
         }
       } else {
@@ -229,9 +229,60 @@ class RemoteAuthService {
         for (var report in reportsData) {
           var reportData = Reports.fromJson(report);
 
-          // Imprime o valor do score
-          if (reportData.score != null) {
-            print('Score do cliente: ${reportData.score!.score}');
+          // Obtém o valor do score
+          var score = reportData.score?.score;
+
+          // Verifica se o score é 0 e se todas as variáveis são nulas ou vazias
+          var pefinResponse = reportData.negativeData?.pefin?.pefinResponse;
+          var refinResponse = reportData.negativeData?.refin?.refinResponse;
+          var notaryResponse = reportData.negativeData?.notary?.notaryResponse;
+          var checkResponse = reportData.negativeData?.check?.checkResponse;
+          var collectionRecordsResponse = reportData
+              .negativeData?.collectionRecords?.collectionRecordsResponse;
+
+          // Verifica se todas as variáveis são nulas ou vazias
+          bool allNullOrEmpty =
+              (pefinResponse == null || pefinResponse.isEmpty) &&
+                  (refinResponse == null || refinResponse.isEmpty) &&
+                  (notaryResponse == null || notaryResponse.isEmpty) &&
+                  (checkResponse == null || checkResponse.isEmpty) &&
+                  (collectionRecordsResponse == null ||
+                      collectionRecordsResponse.isEmpty);
+
+          // Se o score for 0 e todas as variáveis forem nulas ou vazias, retorna true
+          if (score == 0 && allNullOrEmpty) {
+            Navigator.of(Get.overlayContext!)
+                .pushReplacementNamed('/resultapprovedvoalle');
+            print('Score é 0 e todas as respostas estão vazias ou nulas');
+            return SerasaModel(reports: listReports); // Retorna após aprovação
+          }
+
+          // Se o score for abaixo de 300, retorna false
+          if (score != null && score < 300) {
+            Navigator.of(Get.overlayContext!)
+                .pushReplacementNamed('/scorefailed');
+            print('Score abaixo de 300');
+            return SerasaModel(reports: listReports); // Retorna após reprovação
+          }
+
+          // Se o score for acima de 300 e não for allNullOrEmpty, retorna false e imprime mensagem
+          if (score != null && score > 300 && !allNullOrEmpty) {
+            Navigator.of(Get.overlayContext!)
+                .pushReplacementNamed('/negativehighscore');
+            print(
+                'Negativado e score acima de 300 e a primeira parcela deve ser paga antecipadamente');
+            return SerasaModel(reports: listReports); // Retorna após reprovação
+          }
+
+          // Se todas as respostas forem nulas ou vazias, aprova
+          if (allNullOrEmpty) {
+            Navigator.of(Get.overlayContext!)
+                .pushReplacementNamed('/nonegativesucess');
+            print('Todas as respostas estão vazias ou nulas');
+          } else {
+            Navigator.of(Get.overlayContext!)
+                .pushReplacementNamed('/negativeclient');
+            print('Pelo menos uma resposta não está vazia ou nula');
           }
 
           // Adiciona o relatório à lista de relatórios
@@ -246,6 +297,157 @@ class RemoteAuthService {
           'Erro ao consumir a API do Serasa: ${response.statusCode}');
     }
   }
+
+  // Future<SerasaModel> getSerasaData({
+  //   required String? tokenSerasa,
+  //   required String? cpf,
+  // }) async {
+  //   List<Reports> listReports = [];
+  //   var response = await client.get(
+  //     Uri.parse(
+  //         'https://api.serasaexperian.com.br/credit-services/person-information-report/v1/creditreport?reportName=RELATORIO_BASICO_PF_PME'), // URL da API
+  //     headers: {
+  //       'Authorization': 'Bearer $tokenSerasa',
+  //       'X-Document-id': '$cpf', // Substitua com o ID do documento
+  //       'Content-Type': 'application/json',
+  //     },
+  //   );
+
+  //   // Verifica se a resposta foi bem-sucedida
+  //   if (response.statusCode == 200) {
+  //     print("Deu certo!");
+  //     var responseBody = jsonDecode(response.body);
+  //     var reportsData = responseBody['reports'];
+
+  //     // Se houver dados, adicione-os à lista de relatórios
+  //     if (reportsData != null && reportsData.isNotEmpty) {
+  //       for (var report in reportsData) {
+  //         var reportData = Reports.fromJson(report);
+
+  //         // Verifica e consome os dados de pefinResponse, refinResponse, etc.
+  //         var pefinResponse = reportData.negativeData?.pefin?.pefinResponse;
+  //         var refinResponse = reportData.negativeData?.refin?.refinResponse;
+  //         var notaryResponse = reportData.negativeData?.notary?.notaryResponse;
+  //         var checkResponse = reportData.negativeData?.check?.checkResponse;
+  //         var collectionRecordsResponse = reportData
+  //             .negativeData?.collectionRecords?.collectionRecordsResponse;
+
+  //         // Verifica se todas as respostas são nulas ou vazias
+  //         if (pefinResponse == null || pefinResponse.isEmpty) {
+  //           print('pefinResponse está vazio ou nulo');
+  //         }
+  //         if (refinResponse == null || refinResponse.isEmpty) {
+  //           print('refinResponse está vazio ou nulo');
+  //         }
+  //         if (notaryResponse == null || notaryResponse.isEmpty) {
+  //           print('notaryResponse está vazio ou nulo');
+  //         }
+  //         if (checkResponse == null || checkResponse.isEmpty) {
+  //           print('checkResponse está vazio ou nulo');
+  //         }
+  //         if (collectionRecordsResponse == null ||
+  //             collectionRecordsResponse.isEmpty) {
+  //           print('collectionRecordsResponse está vazio ou nulo');
+  //         }
+
+  //         // Verifica se todas as variáveis são nulas ou vazias
+  //         bool allNullOrEmpty =
+  //             (pefinResponse == null || pefinResponse.isEmpty) &&
+  //                 (refinResponse == null || refinResponse.isEmpty) &&
+  //                 (notaryResponse == null || notaryResponse.isEmpty) &&
+  //                 (checkResponse == null || checkResponse.isEmpty) &&
+  //                 (collectionRecordsResponse == null ||
+  //                     collectionRecordsResponse.isEmpty);
+
+  //         // Retorna true se todas forem nulas ou vazias, caso contrário, retorna false
+  //         if (allNullOrEmpty) {
+  //           Navigator.of(Get.overlayContext!)
+  //               .pushReplacementNamed('/resultapprovedvoalle');
+  //           print('Todas as respostas estão vazias ou nulas');
+  //         } else {
+  //           Navigator.of(Get.overlayContext!)
+  //               .pushReplacementNamed('/resultnotapproved');
+  //           print('Pelo menos uma resposta não está vazia ou nula');
+  //         }
+
+  //         // Adiciona o relatório à lista de relatórios
+  //         listReports.add(reportData);
+  //       }
+  //     }
+
+  //     // Retorna o objeto SerasaModel com a lista de relatórios
+  //     return SerasaModel(reports: listReports);
+  //   } else {
+  //     throw Exception(
+  //         'Erro ao consumir a API do Serasa: ${response.statusCode}');
+  //   }
+  // }
+
+  // Future<SerasaModel> getSerasaData({
+  //   required String? tokenSerasa,
+  //   required String? cpf,
+  // }) async {
+  //   List<Reports> listReports = [];
+  //   var response = await client.get(
+  //     Uri.parse(
+  //         'https://api.serasaexperian.com.br/credit-services/person-information-report/v1/creditreport?reportName=RELATORIO_BASICO_PF_PME'), // URL da API
+  //     headers: {
+  //       'Authorization': 'Bearer $tokenSerasa',
+  //       'X-Document-id': '$cpf', // Substitua com o ID do documento
+  //       'Content-Type': 'application/json',
+  //     },
+  //   );
+
+  //   // Verifica se a resposta foi bem-sucedida
+  //   if (response.statusCode == 200) {
+  //     print("Deu certo!");
+  //     var responseBody = jsonDecode(response.body);
+  //     var reportsData = responseBody['reports'];
+
+  //     // Se houver dados, adicione-os à lista de relatórios
+  //     if (reportsData != null && reportsData.isNotEmpty) {
+  //       for (var report in reportsData) {
+  //         var reportData = Reports.fromJson(report);
+
+  //         // Imprime o valor do score
+  //         if (reportData.score != null) {
+  //           print('Score do cliente: ${reportData.score!.score}');
+  //         }
+
+  //         // Verifica e consome os dados de pefinResponse com segurança
+  //         var pefinResponse = reportData.negativeData?.pefin?.pefinResponse;
+  //         var refinResponse = reportData.negativeData?.refin?.refinResponse;
+  //         var notaryResponse = reportData.negativeData?.notary?.notaryResponse;
+  //         var checkResponse = reportData.negativeData?.check?.checkResponse;
+  //         var collectionRecordsResponse = reportData
+  //             .negativeData?.collectionRecords?.collectionRecordsResponse;
+
+  //         if (pefinResponse != null && pefinResponse.isNotEmpty) {
+  //           print('Devendo Pefin');
+  //           // for (var pefin in pefinResponse) {
+  //           //   print('Data da Ocorrência: ${pefin.occurrenceDate}');
+  //           //   print('Credor: ${pefin.creditorName}');
+  //           //   print('Valor: ${pefin.amount}');
+  //           //   print('Contrato: ${pefin.contractId}');
+  //           //   print('Natureza Legal: ${pefin.legalNature}');
+  //           //   print('-----------------------------------');
+  //           // }
+  //         } else {
+  //           print('pefinResponse está vazio ou nulo');
+  //         }
+
+  //         // Adiciona o relatório à lista de relatórios
+  //         listReports.add(reportData);
+  //       }
+  //     }
+
+  //     // Retorna o objeto SerasaModel com a lista de relatórios
+  //     return SerasaModel(reports: listReports);
+  //   } else {
+  //     throw Exception(
+  //         'Erro ao consumir a API do Serasa: ${response.statusCode}');
+  //   }
+  // }
 
   Future<String> getTokenVoalle() async {
     // URL da API
