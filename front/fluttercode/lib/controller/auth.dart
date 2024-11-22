@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
@@ -7,9 +6,7 @@ import 'package:Consult/service/local/auth.dart';
 import 'package:Consult/service/remote/auth.dart';
 import '../model/user.dart';
 import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:uuid/uuid.dart'; // Você pode adicionar este pacote para gerar UUIDs únicas
 
 class AuthController extends GetxController {
   static AuthController instance = Get.find();
@@ -58,7 +55,7 @@ class AuthController extends GetxController {
           user.value = userFromJson(userResult.body);
           EasyLoading.showSuccess("Conta criada. Confirme suas informações.");
           // Redirecionar para a tela de login
-          Navigator.of(Get.overlayContext!).pushReplacementNamed('/');
+          Navigator.of(Get.overlayContext!).pushReplacementNamed('/login');
         } else {
           // Mostrar erro se a criação do perfil falhou
           EasyLoading.showError('Alguma coisa deu errado. Tente novamente!');
@@ -229,6 +226,6 @@ class AuthController extends GetxController {
   void signOut() async {
     user.value = null;
     await LocalAuthService().clear();
-    Navigator.of(Get.overlayContext!).pushReplacementNamed('/');
+    Navigator.of(Get.overlayContext!).pushReplacementNamed('/login');
   }
 }
