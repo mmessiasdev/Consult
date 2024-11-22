@@ -5,7 +5,7 @@ import 'package:Consult/view/dashboard/screen.dart';
 import 'package:Consult/view/result/lowscore.dart';
 import 'package:Consult/view/result/negative.dart';
 import 'package:Consult/view/result/nonegative.dart';
-import 'package:Consult/view/result/result.dart';
+import 'package:Consult/view/result/resultvoalle.dart';
 import 'package:get/get.dart';
 
 class AppPage {

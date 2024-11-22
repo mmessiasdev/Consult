@@ -35,7 +35,7 @@ class _NegativeScreenState extends State<NegativeScreen> {
               children: [
                 Column(
                   children: [
-                    Image.asset('assets/images/illustrator/illustrator2.png'),
+                    Image.asset('assets/images/illustrator/illustrator2.png', height: 250,),
                     const SizedBox(
                       height: 50,
                     ),
@@ -60,11 +60,12 @@ class _NegativeScreenState extends State<NegativeScreen> {
                     SecundaryText(
                         text: "CPF negativado.",
                         color: nightColor,
-                        align: TextAlign.start),
+                        align: TextAlign.center),
                     SizedBox(
                       height: 10,
                     ),
                     SubTextSized(
+                        align: TextAlign.center,
                         text: 'Mediante a pagamento da taxa de 400 reais',
                         size: 20,
                         fontweight: FontWeight.w800),

@@ -127,27 +127,27 @@ class _SignInScreenState extends State<SignInScreen> {
                           SizedBox(
                             height: 20,
                           ),
-                          RichDefaultText(
-                            text: 'Não tem conta? ',
-                            size: 12,
-                            wid: GestureDetector(
-                              onTap: () {
-                                (
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => SignUpScreen(),
-                                    ),
-                                  ),
-                                );
-                              },
-                              child: SubText(
-                                text: 'Crie uma aqui!',
-                                align: TextAlign.start,
-                                color: PrimaryColor,
-                              ),
-                            ),
-                          )
+                          // RichDefaultText(
+                          //   text: 'Não tem conta? ',
+                          //   size: 12,
+                          //   wid: GestureDetector(
+                          //     onTap: () {
+                          //       (
+                          //         Navigator.pushReplacement(
+                          //           context,
+                          //           MaterialPageRoute(
+                          //             builder: (context) => SignUpScreen(),
+                          //           ),
+                          //         ),
+                          //       );
+                          //     },
+                          //     child: SubText(
+                          //       text: 'Crie uma aqui!',
+                          //       align: TextAlign.start,
+                          //       color: PrimaryColor,
+                          //     ),
+                          //   ),
+                          // )
                         ],
                       )),
                   SizedBox(

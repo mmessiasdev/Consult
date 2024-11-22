@@ -32,9 +32,10 @@ class _NoNegativeScreenState extends State<NoNegativeScreen> {
                     SecundaryText(
                         text: "Cliente Aprovado!",
                         color: nightColor,
-                        align: TextAlign.start),
+                        align: TextAlign.center),
                         SizedBox(height: 10,),
                     SubTextSized(
+                        align: TextAlign.center,
                         text: 'Sem negativação.',
                         size: 20,
                         fontweight: FontWeight.w800),

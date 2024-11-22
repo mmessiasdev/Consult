@@ -75,14 +75,14 @@ class _LowScoreScreenState extends State<LowScoreScreen> {
               children: [
                 Column(
                   children: [
-                    Image.asset('assets/images/illustrator/illustrator2.png'),
+                    Image.asset('assets/images/illustrator/illustrator2.png', height: 250,),
                     const SizedBox(
                       height: 50,
                     ),
                     SecundaryText(
                         text: "Pendente",
                         color: nightColor,
-                        align: TextAlign.start),
+                        align: TextAlign.center),
                         SizedBox(height: 10,),
                     const SizedBox(
                       height: 15,
@@ -102,9 +102,10 @@ class _LowScoreScreenState extends State<LowScoreScreen> {
                         text:
                             "CPF cadastrado não possui Score suficiente no Serasa (abaixo de 300).",
                         color: nightColor,
-                        align: TextAlign.start),
+                        align: TextAlign.center),
                         SizedBox(height: 10,),
                     SubTextSized(
+                        align: TextAlign.center,
                         text: 'Mediante a pagamento da taxa de 400 reais.',
                         size: 20,
                         fontweight: FontWeight.w800),

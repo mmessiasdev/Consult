@@ -32,12 +32,12 @@ class _ResultApprovedState extends State<ResultApproved> {
                   children: [
                     Image.asset('assets/images/illustrator/illustrator1.png'),
                     const SizedBox(
-                      height: 50,
+                      height: 20,
                     ),
                     SecundaryText(
                         text: "Cliente Aprovado! Já é da base",
                         color: nightColor,
-                        align: TextAlign.start),
+                        align: TextAlign.center),
                     SizedBox(
                       height: 10,
                     ),
@@ -107,19 +107,19 @@ class _ResultNotApprovedOpenInvoicesState
               children: [
                 Column(
                   children: [
-                    Image.asset('assets/images/illustrator/illustrator2.png'),
+                    Image.asset(
+                      'assets/images/illustrator/illustrator2.png',
+                      height: 250,
+                    ),
                     const SizedBox(
-                      height: 50,
+                      height: 20,
                     ),
                     SecundaryText(
                         text: "Pendente",
                         color: nightColor,
-                        align: TextAlign.start),
-                    SizedBox(
-                      height: 10,
-                    ),
+                        align: TextAlign.center),
                     const SizedBox(
-                      height: 15,
+                      height: 10,
                     ),
                     Icon(
                       Icons.block,
@@ -135,11 +135,12 @@ class _ResultNotApprovedOpenInvoicesState
                     SecundaryText(
                         text: "Cliente da base. Faturas em vencimento",
                         color: nightColor,
-                        align: TextAlign.start),
+                        align: TextAlign.center),
                     SizedBox(
                       height: 10,
                     ),
                     SubTextSized(
+                        align: TextAlign.center,
                         text: 'Necessário pagamento das faturas em aberto.',
                         size: 20,
                         fontweight: FontWeight.w800),

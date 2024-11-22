@@ -36,7 +36,7 @@ class _NegativeHighScoreScreenState extends State<NegativeHighScoreScreen> {
               children: [
                 Column(
                   children: [
-                    Image.asset('assets/images/illustrator/illustrator2.png'),
+                    Image.asset('assets/images/illustrator/illustrator2.png', height: 250,),
                     const SizedBox(
                       height: 50,
                     ),
@@ -61,11 +61,12 @@ class _NegativeHighScoreScreenState extends State<NegativeHighScoreScreen> {
                     SecundaryText(
                         text: "CPF negativado. Score alto.",
                         color: nightColor,
-                        align: TextAlign.start),
+                        align: TextAlign.center),
                     SizedBox(
                       height: 10,
                     ),
                     SubTextSized(
+                        align: TextAlign.center,
                         text:
                             'Mediante a pagamento da primeira fatura antecipadamente',
                         size: 20,

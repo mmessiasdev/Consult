@@ -26,14 +26,9 @@ class MainHeader extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: PrimaryText(
-                color: nightColor,
-                text: title,
-                over: TextOverflow.fade,
-                maxl: maxl,
-              ),
-            ),
+            SizedBox(
+                width: 150,
+                child: Image.asset('assets/images/logo/image.png')),
             GestureDetector(
               onTap: () => onClick!(),
               child: Icon(

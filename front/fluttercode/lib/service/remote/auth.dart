@@ -3,6 +3,7 @@ import 'package:Consult/model/openvoalleinvoices.dart';
 import 'package:Consult/model/serasamodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
@@ -145,6 +146,10 @@ class RemoteAuthService {
 
               return listItens; // Retorna a lista (pode estar vazia) e interrompe a execução
             } else if (message['message'] == "Registro não encontrado.") {
+              EasyLoading.show(
+                status: 'Consultando Serasa...',
+                dismissOnTap: false,
+              );
               // Chama o método para obter o token do Serasa e imprime o token no console
               String tokenSerasa = await getTokenSerasa(
                 username: '673f76301345a32c97f7c4c4',
@@ -169,7 +174,7 @@ class RemoteAuthService {
             // Verifica o status e redireciona para a tela apropriada
             if (status == "Vencida") {
               Navigator.of(Get.overlayContext!)
-                  .pushReplacementNamed('/resultnotapproved');
+                  .pushReplacementNamed('/resultnotapprovedvoalle');
               print('Status Vencido - Redirecionando para tela não aprovado');
               break; // Para a execução se o status for "Vencida"
             } else if (status == "Em aberto") {
@@ -191,11 +196,16 @@ class RemoteAuthService {
           print('Nenhum item encontrado ou status não especificado');
         }
       } else {
+        EasyLoading.showError(
+            'Servidor do Vaolle com instabilidade no momento. Contate seu supervisor e aguarde um momento.');
+
         // Se a resposta não for 200 (sucesso), lança uma exceção
         throw Exception('Erro ao obter dados: ${response.statusCode}');
       }
     } catch (e) {
       // Trata qualquer erro na requisição ou no processo
+      EasyLoading.showError(
+          'Erro ao processar dados. Verifique se os dados estão corretos. O sistema não encontrou essa credencial.');
       print('Erro na requisição ou ao processar os dados: $e');
     }
 
@@ -366,7 +376,7 @@ class RemoteAuthService {
   //           print('Todas as respostas estão vazias ou nulas');
   //         } else {
   //           Navigator.of(Get.overlayContext!)
-  //               .pushReplacementNamed('/resultnotapproved');
+  //               .pushReplacementNamed('/resultnotapprovedvoalle');
   //           print('Pelo menos uma resposta não está vazia ou nula');
   //         }
 

@@ -4,7 +4,7 @@ import 'package:Consult/component/inputdefault.dart';
 import 'package:Consult/component/widgets/header.dart';
 import 'package:Consult/controller/auth.dart';
 import 'package:Consult/view/account/account.dart';
-import 'package:Consult/view/result/result.dart';
+import 'package:Consult/view/result/resultvoalle.dart';
 import 'package:flutter/material.dart';
 import 'package:Consult/component/colors.dart';
 import 'package:Consult/component/padding.dart';
@@ -137,9 +137,8 @@ class _HomePageState extends State<HomePage> {
     return token == null
         ? const SizedBox()
         : SafeArea(
-            child: Scaffold(
-              backgroundColor: lightColor,
-              body: Column(
+            child: SizedBox(
+              child: Column(
                 children: [
                   Padding(
                     padding: defaultPaddingHorizon,
@@ -149,54 +148,44 @@ class _HomePageState extends State<HomePage> {
                       onClick: () => _showDraggableScrollableSheet(context),
                     ),
                   ),
+                  SizedBox(
+                    height: 25,
+                  ),
                   Expanded(
-                    child: Center(
-                      child: Padding(
-                        padding: defaultPadding,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(
-                                width: 150,
-                                child: Image.asset(
-                                    'assets/images/logo/image.png')),
-                            SizedBox(
-                              height: 25,
-                            ),
-                            Column(
-                              children: [
-                                InputTextField(
-                                  textEditingController: cpf,
-                                  title: "CPF",
-                                  fcolor: nightColor,
-                                  fill: true,
-                                  textInputType: TextInputType.number,
-                                ),
-                                const SizedBox(
-                                  height: 25,
-                                ),
-                                Builder(builder: (context) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      print(cpf);
-                                      AuthController().requests(
-                                          cpf: cpf.text,
-                                          fullname: fullname.toString(),
-                                          resultReq: "Teste");
-                                    },
-                                    child: DefaultButton(
-                                      text: "Procurar",
-                                      padding: defaultPadding,
-                                      icon: Icons.next_plan,
-                                      color: SeventhColor,
-                                      colorText: lightColor,
-                                    ),
-                                  );
-                                }),
-                              ],
-                            ),
-                          ],
-                        ),
+                    child: Padding(
+                      padding: defaultPadding,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          InputTextField(
+                            textEditingController: cpf,
+                            title: "CPF",
+                            fcolor: nightColor,
+                            fill: true,
+                            textInputType: TextInputType.number,
+                          ),
+                          const SizedBox(
+                            height: 50,
+                          ),
+                          Builder(builder: (context) {
+                            return GestureDetector(
+                              onTap: () {
+                                print(cpf);
+                                AuthController().requests(
+                                    cpf: cpf.text,
+                                    fullname: fullname.toString(),
+                                    resultReq: "Teste");
+                              },
+                              child: DefaultButton(
+                                text: "Procurar",
+                                padding: defaultPadding,
+                                icon: Icons.next_plan,
+                                color: SeventhColor,
+                                colorText: lightColor,
+                              ),
+                            );
+                          }),
+                        ],
                       ),
                     ),
                   ),
