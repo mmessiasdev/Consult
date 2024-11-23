@@ -26,20 +26,30 @@ class DefaultButton extends StatelessWidget {
         color: color ?? TerciaryColor,
       ),
       child: Padding(
-        padding: padding ?? defaultPaddingHorizon,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: colorText ?? nightColor,),
-            SizedBox(width: 10,),
-            ButtonText(
-              text: text,
-              colorText: colorText ?? nightColor,
-            ),
-          ],
-        ),
-      ),
+          padding: padding ?? defaultPaddingHorizon,
+          child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ButtonText(
+                  text: text,
+                  colorText: colorText ?? nightColor,
+                ),
+                icon != null
+                    ? Row(
+                        children: [
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Icon(
+                            icon,
+                            color: colorText ?? nightColor,
+                            size: 28,
+                          ),
+                        ],
+                      )
+                    : const SizedBox(),
+              ])),
     );
   }
 }

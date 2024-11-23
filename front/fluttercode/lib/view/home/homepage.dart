@@ -159,7 +159,7 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           InputTextField(
                             textEditingController: cpf,
-                            title: "CPF",
+                            title: "Digite um CPF para consultá-lo",
                             fcolor: nightColor,
                             fill: true,
                             textInputType: TextInputType.number,
@@ -177,9 +177,9 @@ class _HomePageState extends State<HomePage> {
                                     resultReq: "Teste");
                               },
                               child: DefaultButton(
-                                text: "Procurar",
+                                text: "Consultar",
                                 padding: defaultPadding,
-                                icon: Icons.next_plan,
+                                icon: Icons.keyboard_arrow_right_outlined,
                                 color: SeventhColor,
                                 colorText: lightColor,
                               ),

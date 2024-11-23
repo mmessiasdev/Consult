@@ -139,10 +139,19 @@ class RemoteAuthService {
           // Verifica as mensagens específicas
           for (var message in messages) {
             if (message['message'] == "Cliente não possui títulos em aberto.") {
-              Navigator.of(Get.overlayContext!)
-                  .pushReplacementNamed('/resultapprovedvoalle');
+              EasyLoading.show(
+                status: 'Consultando Serasa...',
+                dismissOnTap: false,
+              );
+              // Chama o método para obter o token do Serasa e imprime o token no console
+              String tokenSerasa = await getTokenSerasa(
+                username: '673f76301345a32c97f7c4c4',
+                password: '701b3d5a8MTxwj-96e1-423a-a8ff-c2e69f5dbfaa',
+              );
+              await getSerasaData(tokenSerasa: tokenSerasa, cpf: cpf);
+
               print(
-                  'Mensagem: Cliente não possui títulos em aberto. - Redirecionando para tela de aprovado');
+                  'Mensagem: Cliente não possui títulos em aberto. - Redirecionando para a verificação do Serasa');
 
               return listItens; // Retorna a lista (pode estar vazia) e interrompe a execução
             } else if (message['message'] == "Registro não encontrado.") {
@@ -271,7 +280,7 @@ class RemoteAuthService {
           if (score != null && score < 300) {
             Navigator.of(Get.overlayContext!)
                 .pushReplacementNamed('/scorefailed');
-            print('Score abaixo de 300');
+            print('Score abaixo de 300, Score do cliente $score');
             return SerasaModel(reports: listReports); // Retorna após reprovação
           }
 
