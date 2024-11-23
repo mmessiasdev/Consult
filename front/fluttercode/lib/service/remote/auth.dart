@@ -182,6 +182,10 @@ class RemoteAuthService {
 
             // Verifica o status e redireciona para a tela apropriada
             if (status == "Vencida") {
+              addSolicitationInvoiceVoalle(
+                  clientId: item['contractNumber'],
+                  desc: "com debito em vencimento.",
+                  token: voalleToken);
               Navigator.of(Get.overlayContext!)
                   .pushReplacementNamed('/resultnotapprovedvoalle');
               print('Status Vencido - Redirecionando para tela não aprovado');
@@ -317,157 +321,6 @@ class RemoteAuthService {
     }
   }
 
-  // Future<SerasaModel> getSerasaData({
-  //   required String? tokenSerasa,
-  //   required String? cpf,
-  // }) async {
-  //   List<Reports> listReports = [];
-  //   var response = await client.get(
-  //     Uri.parse(
-  //         'https://api.serasaexperian.com.br/credit-services/person-information-report/v1/creditreport?reportName=RELATORIO_BASICO_PF_PME'), // URL da API
-  //     headers: {
-  //       'Authorization': 'Bearer $tokenSerasa',
-  //       'X-Document-id': '$cpf', // Substitua com o ID do documento
-  //       'Content-Type': 'application/json',
-  //     },
-  //   );
-
-  //   // Verifica se a resposta foi bem-sucedida
-  //   if (response.statusCode == 200) {
-  //     print("Deu certo!");
-  //     var responseBody = jsonDecode(response.body);
-  //     var reportsData = responseBody['reports'];
-
-  //     // Se houver dados, adicione-os à lista de relatórios
-  //     if (reportsData != null && reportsData.isNotEmpty) {
-  //       for (var report in reportsData) {
-  //         var reportData = Reports.fromJson(report);
-
-  //         // Verifica e consome os dados de pefinResponse, refinResponse, etc.
-  //         var pefinResponse = reportData.negativeData?.pefin?.pefinResponse;
-  //         var refinResponse = reportData.negativeData?.refin?.refinResponse;
-  //         var notaryResponse = reportData.negativeData?.notary?.notaryResponse;
-  //         var checkResponse = reportData.negativeData?.check?.checkResponse;
-  //         var collectionRecordsResponse = reportData
-  //             .negativeData?.collectionRecords?.collectionRecordsResponse;
-
-  //         // Verifica se todas as respostas são nulas ou vazias
-  //         if (pefinResponse == null || pefinResponse.isEmpty) {
-  //           print('pefinResponse está vazio ou nulo');
-  //         }
-  //         if (refinResponse == null || refinResponse.isEmpty) {
-  //           print('refinResponse está vazio ou nulo');
-  //         }
-  //         if (notaryResponse == null || notaryResponse.isEmpty) {
-  //           print('notaryResponse está vazio ou nulo');
-  //         }
-  //         if (checkResponse == null || checkResponse.isEmpty) {
-  //           print('checkResponse está vazio ou nulo');
-  //         }
-  //         if (collectionRecordsResponse == null ||
-  //             collectionRecordsResponse.isEmpty) {
-  //           print('collectionRecordsResponse está vazio ou nulo');
-  //         }
-
-  //         // Verifica se todas as variáveis são nulas ou vazias
-  //         bool allNullOrEmpty =
-  //             (pefinResponse == null || pefinResponse.isEmpty) &&
-  //                 (refinResponse == null || refinResponse.isEmpty) &&
-  //                 (notaryResponse == null || notaryResponse.isEmpty) &&
-  //                 (checkResponse == null || checkResponse.isEmpty) &&
-  //                 (collectionRecordsResponse == null ||
-  //                     collectionRecordsResponse.isEmpty);
-
-  //         // Retorna true se todas forem nulas ou vazias, caso contrário, retorna false
-  //         if (allNullOrEmpty) {
-  //           Navigator.of(Get.overlayContext!)
-  //               .pushReplacementNamed('/resultapprovedvoalle');
-  //           print('Todas as respostas estão vazias ou nulas');
-  //         } else {
-  //           Navigator.of(Get.overlayContext!)
-  //               .pushReplacementNamed('/resultnotapprovedvoalle');
-  //           print('Pelo menos uma resposta não está vazia ou nula');
-  //         }
-
-  //         // Adiciona o relatório à lista de relatórios
-  //         listReports.add(reportData);
-  //       }
-  //     }
-
-  //     // Retorna o objeto SerasaModel com a lista de relatórios
-  //     return SerasaModel(reports: listReports);
-  //   } else {
-  //     throw Exception(
-  //         'Erro ao consumir a API do Serasa: ${response.statusCode}');
-  //   }
-  // }
-
-  // Future<SerasaModel> getSerasaData({
-  //   required String? tokenSerasa,
-  //   required String? cpf,
-  // }) async {
-  //   List<Reports> listReports = [];
-  //   var response = await client.get(
-  //     Uri.parse(
-  //         'https://api.serasaexperian.com.br/credit-services/person-information-report/v1/creditreport?reportName=RELATORIO_BASICO_PF_PME'), // URL da API
-  //     headers: {
-  //       'Authorization': 'Bearer $tokenSerasa',
-  //       'X-Document-id': '$cpf', // Substitua com o ID do documento
-  //       'Content-Type': 'application/json',
-  //     },
-  //   );
-
-  //   // Verifica se a resposta foi bem-sucedida
-  //   if (response.statusCode == 200) {
-  //     print("Deu certo!");
-  //     var responseBody = jsonDecode(response.body);
-  //     var reportsData = responseBody['reports'];
-
-  //     // Se houver dados, adicione-os à lista de relatórios
-  //     if (reportsData != null && reportsData.isNotEmpty) {
-  //       for (var report in reportsData) {
-  //         var reportData = Reports.fromJson(report);
-
-  //         // Imprime o valor do score
-  //         if (reportData.score != null) {
-  //           print('Score do cliente: ${reportData.score!.score}');
-  //         }
-
-  //         // Verifica e consome os dados de pefinResponse com segurança
-  //         var pefinResponse = reportData.negativeData?.pefin?.pefinResponse;
-  //         var refinResponse = reportData.negativeData?.refin?.refinResponse;
-  //         var notaryResponse = reportData.negativeData?.notary?.notaryResponse;
-  //         var checkResponse = reportData.negativeData?.check?.checkResponse;
-  //         var collectionRecordsResponse = reportData
-  //             .negativeData?.collectionRecords?.collectionRecordsResponse;
-
-  //         if (pefinResponse != null && pefinResponse.isNotEmpty) {
-  //           print('Devendo Pefin');
-  //           // for (var pefin in pefinResponse) {
-  //           //   print('Data da Ocorrência: ${pefin.occurrenceDate}');
-  //           //   print('Credor: ${pefin.creditorName}');
-  //           //   print('Valor: ${pefin.amount}');
-  //           //   print('Contrato: ${pefin.contractId}');
-  //           //   print('Natureza Legal: ${pefin.legalNature}');
-  //           //   print('-----------------------------------');
-  //           // }
-  //         } else {
-  //           print('pefinResponse está vazio ou nulo');
-  //         }
-
-  //         // Adiciona o relatório à lista de relatórios
-  //         listReports.add(reportData);
-  //       }
-  //     }
-
-  //     // Retorna o objeto SerasaModel com a lista de relatórios
-  //     return SerasaModel(reports: listReports);
-  //   } else {
-  //     throw Exception(
-  //         'Erro ao consumir a API do Serasa: ${response.statusCode}');
-  //   }
-  // }
-
   Future<String> getTokenVoalle() async {
     // URL da API
     final url = Uri.parse('$voalleUrl:45700/connect/token');
@@ -502,6 +355,50 @@ class RemoteAuthService {
     } catch (e) {
       throw Exception('Erro ao fazer a requisição: $e');
     }
+  }
+
+  Future addSolicitationInvoiceVoalle({
+    required String? clientId,
+    required String? desc,
+    required String? token,
+  }) async {
+    final body = {
+      "incidentStatusId": "4",
+      "personId": clientId,
+      "clientId": clientId,
+      "incidentTypeId": 1702,
+      "contractServiceTagId": 180391,
+      "catalogServiceId": 201,
+      "serviceLevelAgreementId": 11,
+      "catalogServiceItemId": 1,
+      "catalogServiceItemClassId": 1,
+      "assignment": {
+        "title": "Consulta de dados financeiros",
+        "description":
+            "Solicitação aberta automaticamente via Connect Consult. Cliente se econtra com $desc",
+        "priority": 1,
+        "beginningDate": "",
+        "finalDate": "",
+        "report": {
+          "beginningDate": "",
+          "finalDate": "",
+          "description":
+              "Solicitação aberta automaticamente via Connect Consult. Cliente se econtra com $desc",
+        },
+        "companyPlaceId": 1
+      }
+    };
+    var response = await client.post(
+      Uri.parse(
+          '$voalleUrl:45715/external/integrations/thirdparty/opendetailedsolicitation'),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+        'ngrok-skip-browser-warning': "true"
+      },
+      body: jsonEncode(body),
+    );
+    return response;
   }
 
   Future<String> getTokenSerasa({
@@ -541,288 +438,3 @@ class RemoteAuthService {
     }
   }
 }
-
-
-
-// {
-//     "reports": [
-//         {
-//             "reportName": "RELATORIO_BASICO_PF_PME",
-//             "registration": {
-//                 "documentNumber": "19160445572",
-//                 "consumerName": "LUCINEIDE MARIA SANTOS ALVES PEREIRA",
-//                 "motherName": "SEVERINA MARIA DOS SANTOS",
-//                 "birthDate": "1960-07-09",
-//                 "statusRegistration": "REGULAR",
-//                 "statusDate": "2024-07-26"
-//             },
-//             "negativeData": {
-//                 "pefin": {
-//                     "pefinResponse": [],
-//                     "summary": {
-//                         "count": 0,
-//                         "balance": 0.0
-//                     }
-//                 },
-//                 "refin": {
-//                     "refinResponse": [],
-//                     "summary": {
-//                         "count": 0,
-//                         "balance": 0.0
-//                     }
-//                 },
-//                 "notary": {
-//                     "notaryResponse": [],
-//                     "summary": {
-//                         "count": 0,
-//                         "balance": 0.0
-//                     }
-//                 },
-//                 "check": {
-//                     "checkResponse": [],
-//                     "summary": {
-//                         "count": 0,
-//                         "balance": 0.0
-//                     }
-//                 },
-//                 "collectionRecords": {
-//                     "collectionRecordsResponse": [],
-//                     "summary": {
-//                         "count": 0,
-//                         "balance": 0.0
-//                     }
-//                 }
-//             },
-//             "score": {
-//                 "score": 943,
-//                 "scoreModel": "HRLN",
-//                 "range": "A",
-//                 "defaultRate": "3,70",
-//                 "codeMessage": 99,
-//                 "message": "ESPACO RESERVADO PARA MENSAGEM DA INSTITUICAO"
-//             },
-//             "facts": {
-//                 "inquiry": {
-//                     "inquiryResponse": [
-//                         {
-//                             "occurrenceDate": "2024-04-27",
-//                             "segmentDescription": "VAREJO DIVERSOS",
-//                             "daysQuantity": 1
-//                         },
-//                         {
-//                             "occurrenceDate": "2024-04-02",
-//                             "segmentDescription": "ATACADO DURAVEL",
-//                             "daysQuantity": 1
-//                         },
-//                         {
-//                             "occurrenceDate": "2024-01-11",
-//                             "segmentDescription": "BANCOS GIGANTES",
-//                             "daysQuantity": 1
-//                         },
-//                         {
-//                             "occurrenceDate": "2024-01-02",
-//                             "segmentDescription": "VAREJO DE SUPERMERCADOS",
-//                             "daysQuantity": 1
-//                         },
-//                         {
-//                             "occurrenceDate": "2023-12-18",
-//                             "segmentDescription": "PEQUENOS BANCOS",
-//                             "daysQuantity": 1
-//                         }
-//                     ],
-//                     "summary": {
-//                         "count": 5
-//                     }
-//                 },
-//                 "inquirySummary": {
-//                     "inquiryQuantity": {
-//                         "actual": 0,
-//                         "creditInquiriesQuantity": [
-//                             {
-//                                 "inquiryDate": "2024-10",
-//                                 "occurrences": 0
-//                             },
-//                             {
-//                                 "inquiryDate": "2024-09",
-//                                 "occurrences": 0
-//                             },
-//                             {
-//                                 "inquiryDate": "2024-08",
-//                                 "occurrences": 0
-//                             },
-//                             {
-//                                 "inquiryDate": "2024-07",
-//                                 "occurrences": 0
-//                             }
-//                         ]
-//                     }
-//                 },
-//                 "stolenDocuments": {
-//                     "stolenDocumentsResponse": [],
-//                     "summary": {
-//                         "count": 0,
-//                         "balance": 0.0
-//                     }
-//                 }
-//             },
-//             "partner": {
-//                 "partnershipResponse": [
-//                     {
-//                         "businessDocument": "04961171000138",
-//                         "companyName": "LUCINEIDE MARIA SANTOS ALVES PEREIRA ME",
-//                         "participationPercentage": 100.0,
-//                         "companyStatus": "INAPTA",
-//                         "companyStatusCode": "0",
-//                         "companyState": "BA",
-//                         "companyStatusDate": "2024-08-10",
-//                         "updateDate": "2024-08-28",
-//                         "hasNegative": false
-//                     }
-//                 ],
-//                 "summary": {
-//                     "count": 1,
-//                     "balance": 0.0
-//                 }
-//             }
-//         }
-//     ]
-// }
-
-
-
-
-
-
-// {
-//     "reports": [
-//         {
-//             "reportName": "RELATORIO_BASICO_PF_PME",
-//             "registration": {
-//                 "documentNumber": "05112332565",
-//                 "consumerName": "MARIA APARECIDA ROCHA",
-//                 "motherName": "IRACI MARIA LOPES",
-//                 "birthDate": "1979-06-18",
-//                 "statusRegistration": "REGULAR",
-//                 "statusDate": "2024-08-31"
-//             },
-//             "negativeData": {
-//                 "pefin": {
-//                     "pefinResponse": [
-//                         {
-//                             "occurrenceDate": "2022-03-16",
-//                             "legalNatureId": "CD",
-//                             "legalNature": "CREDIARIO",
-//                             "contractId": "0000079674702P01",
-//                             "creditorName": "MAGAZINE LUIZA",
-//                             "amount": 416.64,
-//                             "principal": true
-//                         },
-//                         {
-//                             "occurrenceDate": "2021-07-25",
-//                             "legalNatureId": "OO",
-//                             "legalNature": "OUTRAS OPER",
-//                             "contractId": "0000000000183168",
-//                             "creditorName": "HE NET TELECOMUNICACOES LTDA EPP",
-//                             "amount": 418.51,
-//                             "principal": true
-//                         }
-//                     ],
-//                     "summary": {
-//                         "count": 2,
-//                         "balance": 835.15,
-//                         "firstOccurrence": "2021-07-25",
-//                         "lastOccurrence": "2022-03-16"
-//                     }
-//                 },
-//                 "refin": {
-//                     "refinResponse": [],
-//                     "summary": {
-//                         "count": 0,
-//                         "balance": 0.0
-//                     }
-//                 },
-//                 "notary": {
-//                     "notaryResponse": [],
-//                     "summary": {
-//                         "count": 0,
-//                         "balance": 0.0
-//                     }
-//                 },
-//                 "check": {
-//                     "checkResponse": [],
-//                     "summary": {
-//                         "count": 0,
-//                         "checkCount": 0,
-//                         "balance": 0.0
-//                     }
-//                 },
-//                 "collectionRecords": {
-//                     "collectionRecordsResponse": [],
-//                     "summary": {
-//                         "count": 0,
-//                         "balance": 0.0
-//                     }
-//                 }
-//             },
-//             "score": {
-//                 "score": 350,
-//                 "scoreModel": "HRLN",
-//                 "range": "G",
-//                 "defaultRate": "35,90",
-//                 "codeMessage": 99,
-//                 "message": "ESPACO RESERVADO PARA MENSAGEM DA INSTITUICAO"
-//             },
-//             "negativeSummary": {},
-//             "facts": {
-//                 "inquiry": {
-//                     "inquiryResponse": [
-//                         {
-//                             "occurrenceDate": "2024-11-20",
-//                             "segmentDescription": "SERVICOS DE TELECOM",
-//                             "daysQuantity": 1
-//                         }
-//                     ],
-//                     "summary": {
-//                         "count": 1
-//                     }
-//                 },
-//                 "inquirySummary": {
-//                     "inquiryQuantity": {
-//                         "actual": 1,
-//                         "creditInquiriesQuantity": [
-//                             {
-//                                 "inquiryDate": "2024-10",
-//                                 "occurrences": 0
-//                             },
-//                             {
-//                                 "inquiryDate": "2024-09",
-//                                 "occurrences": 0
-//                             },
-//                             {
-//                                 "inquiryDate": "2024-08",
-//                                 "occurrences": 0
-//                             },
-//                             {
-//                                 "inquiryDate": "2024-07",
-//                                 "occurrences": 0
-//                             }
-//                         ]
-//                     }
-//                 },
-//                 "stolenDocuments": {
-//                     "stolenDocumentsResponse": [],
-//                     "summary": {
-//                         "count": 0,
-//                         "balance": 0.0
-//                     }
-//                 }
-//             },
-//             "partner": {
-//                 "summary": {
-//                     "count": 0,
-//                     "balance": 0.0
-//                 }
-//             }
-//         }
-//     ]
-// }
