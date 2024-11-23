@@ -4,13 +4,11 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:Consult/service/local/auth.dart';
 import 'package:Consult/service/remote/auth.dart';
-import '../model/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AuthController extends GetxController {
   static AuthController instance = Get.find();
-  Rxn<User> user = Rxn<User>();
   String? urlEnv = dotenv.env["BASEURL"];
   String? authSerasa = dotenv.env["AUTHSERASA"];
 
@@ -52,7 +50,6 @@ class AuthController extends GetxController {
 
         // Verificar se a criação do perfil foi bem-sucedida
         if (userResult.statusCode == 200) {
-          user.value = userFromJson(userResult.body);
           EasyLoading.showSuccess("Conta criada. Confirme suas informações.");
           // Redirecionar para a tela de login
           Navigator.of(Get.overlayContext!).pushReplacementNamed('/login');
@@ -100,8 +97,6 @@ class AuthController extends GetxController {
           var email = userData['email'];
           var id = userData['id'];
           var fullname = userData['fullname'];
-
-          user.value = userFromJson(userResult.body);
 
           await LocalAuthService().storeToken(token);
           await LocalAuthService().storeAccount(
@@ -224,7 +219,6 @@ class AuthController extends GetxController {
   }
 
   void signOut() async {
-    user.value = null;
     await LocalAuthService().clear();
     Navigator.of(Get.overlayContext!).pushReplacementNamed('/login');
   }

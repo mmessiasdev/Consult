@@ -52,6 +52,7 @@ class _ResultApprovedState extends State<ResultApproved> {
                       Icons.check_circle_outlined,
                       color: SeventhColor,
                       size: 100,
+                      
                     ),
                   ],
                 ),

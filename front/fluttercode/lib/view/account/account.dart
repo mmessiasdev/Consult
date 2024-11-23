@@ -73,7 +73,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 SizedBox(
                   height: 20,
                 ),
-                InfoText(title: "Username:", stitle: cpf == "null" ? "" : cpf),
+                // InfoText(title: "Username:", stitle: cpf == "null" ? "" : cpf),
                 SizedBox(
                   height: 70,
                 ),
@@ -82,12 +82,12 @@ class _AccountScreenState extends State<AccountScreen> {
                   onClick: () {
                     if (token != "null") {
                       authController.signOut();
-                      Navigator.pop(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignInScreen(),
-                        ),
-                      );
+                      // Navigator.pop(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => const SignInScreen(),
+                      //   ),
+                      // );
                     } else {
                       Navigator.push(
                         context,
