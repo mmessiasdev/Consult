@@ -114,6 +114,7 @@ class RemoteAuthService {
   Future<List<Amount>> getVoalleInvoices({
     required String? cpf,
     required String? voalleToken,
+    required String? colaboratorId,
   }) async {
     List<Amount> listItens = [];
     try {
@@ -129,6 +130,8 @@ class RemoteAuthService {
         },
       );
 
+      int? clientId = await getClientCredentials(cpf: cpf, token: voalleToken);
+
       // Verifica se a resposta foi bem-sucedida
       if (response.statusCode == 200) {
         var body = jsonDecode(response.body);
@@ -139,22 +142,25 @@ class RemoteAuthService {
           // Verifica as mensagens específicas
           for (var message in messages) {
             if (message['message'] == "Cliente não possui títulos em aberto.") {
-              print(itemCountResponse['contractNumber']);
+              // print(itemCountResponse['contractNumber'].toString());
+              addSolicitationInvoiceVoalle(
+                  clientId: clientId.toString(),
+                  colaboratorId: colaboratorId,
+                  desc: "sem pendências até a data da consulta.",
+                  token: voalleToken);
               Navigator.of(Get.overlayContext!)
                   .pushReplacementNamed('/resultapprovedvoalle');
               print(
                 'Cliente sem faturas em aberto, paga em dias - Redirecionando para tela aprovado',
               );
-              print(
-                'Mensagem: Cliente não possui títulos em aberto. - Redirecionando para a verificação do Serasa',
-              );
-              addSolicitationInvoiceVoalle(
-                clientId: itemCountResponse['contractNumber'],
-                desc: "solicitação verifica no Serasa",
-                token: voalleToken,
-              );
               return listItens; // Retorna a lista (pode estar vazia) e interrompe a execução
             } else if (message['message'] == "Registro não encontrado.") {
+              addSolicitationInvoiceVoalle(
+                  clientId: clientId.toString(),
+                  colaboratorId: colaboratorId,
+                  desc:
+                      "com lead criado, mas sem contrato criado. Encaminahdo para a consulta no Serasa.",
+                  token: voalleToken);
               EasyLoading.show(
                 status: 'Possui Lead criado no Voalle',
                 dismissOnTap: false,
@@ -186,7 +192,8 @@ class RemoteAuthService {
             // Verifica o status e redireciona para a tela apropriada
             if (status == "Vencida") {
               addSolicitationInvoiceVoalle(
-                  clientId: item['contractNumber'].toString(),
+                  clientId: clientId.toString(),
+                  colaboratorId: colaboratorId,
                   desc: "com debito em vencimento.",
                   token: voalleToken);
               Navigator.of(Get.overlayContext!)
@@ -194,6 +201,12 @@ class RemoteAuthService {
               print('Status Vencido - Redirecionando para tela não aprovado');
               break; // Para a execução se o status for "Vencida"
             } else if (status == "Em aberto") {
+              addSolicitationInvoiceVoalle(
+                clientId: clientId.toString(),
+                colaboratorId: colaboratorId,
+                desc: "com debito em vencimento.",
+                token: voalleToken,
+              );
               Navigator.of(Get.overlayContext!)
                   .pushReplacementNamed('/resultapprovedvoalle');
               print('Status Em aberto - Redirecionando para tela aprovado');
@@ -222,6 +235,170 @@ class RemoteAuthService {
 
     // Retorna a lista (pode estar vazia)
     return listItens;
+  }
+
+  Future<String> getTokenVoalle() async {
+    // URL da API
+    final url = Uri.parse('$voalleUrl:45700/connect/token');
+
+    // Dados do corpo da requisição
+    final body = {
+      'grant_type': 'client_credentials',
+      'scope': 'syngw',
+      'client_id': 'df0ee088-5f41-4baa-ba45-1454f23d0dcd',
+      'client_secret': '348af78b-4733-4d17-9912-fe44739bd2b0',
+      'syndata':
+          'TWpNMU9EYzVaakk1T0dSaU1USmxaalprWldFd00ySTFZV1JsTTJRMFptUT06WlhsS1ZHVlhOVWxpTTA0d1NXcHZhVnBZU25kTVdFNHdXVmRrY0dKdFkzbE1iVTUyWW0wMWJGa3pVbWxaVXpWcVlqSXdkVmx1U1dsTVEwcFVaVmMxUlZscFNUWkpiVkpwV2xjeGQwMUVRVEJPUkZwbVl6TlNhRm95YkhWYWVVbHpTV3RTYVZaSWJIZGFVMGsyU1c1Q2RtTXpVbTVqYlZaNlNXNHdQUT09OlpUaGtNak0xWWprMFl6bGlORE5tWkRnM01EbGtNalkyWXpBeE1HTTNNR1U9',
+    };
+
+    try {
+      // Enviando a requisição POST
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: body,
+      );
+
+      // Verificando se a requisição foi bem-sucedida
+      if (response.statusCode == 200) {
+        // Se a requisição for bem-sucedida, extrai o token
+        final data = jsonDecode(response.body);
+        return data['access_token']; // Retorna o token
+      } else {
+        // Se não for bem-sucedida, lança um erro
+        throw Exception('Falha ao obter o token: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Erro ao fazer a requisição: $e');
+    }
+  }
+
+  Future<int?> getClientCredentials({
+    required String? cpf,
+    required String? token,
+  }) async {
+    var response = await client.get(
+      Uri.parse(
+          '$voalleUrl:45715/external/integrations/thirdparty/people/txid/$cpf'),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+        'ngrok-skip-browser-warning': "true"
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Cliente encontrado');
+      var body = jsonDecode(response.body);
+      var itemResponse = body['response'];
+      int clientId = itemResponse['id']; // Aqui estamos pegando o 'id'
+      print('ID do cliente: $clientId');
+      return clientId; // Retorna o clientId para ser usado na próxima requisição
+    } else {
+      print('Erro na pesquisa do cliente');
+      return null; // Retorna null em caso de erro
+    }
+  }
+
+  Future addSolicitationInvoiceVoalle({
+    required String? clientId, // clientId recebido
+    required String? desc,
+    required String? token,
+    required String? colaboratorId,
+  }) async {
+    final body = {
+      "incidentStatusId": "4",
+      "personId": clientId, // Aqui você usa o clientId
+      "clientId": clientId, // E aqui também
+      "incidentTypeId": 1702,
+      "contractServiceTagId": 180391,
+      "catalogServiceId": 201,
+      "serviceLevelAgreementId": 11,
+      "catalogServiceItemId": 1,
+      "catalogServiceItemClassId": 1,
+      "assignment": {
+        "title": "Consulta de dados financeiros",
+        "description":
+            "Solicitação aberta automaticamente via Connect Consult APP. Cliente se encontra $desc",
+        "priority": 1,
+        "beginningDate": "",
+        "finalDate": "",
+        "report": {
+          "beginningDate": "",
+          "finalDate": "",
+          "description":
+              "Solicitação aberta automaticamente via Connect Consult APP. Cliente se encontra $desc",
+        },
+        "companyPlaceId": 1
+      }
+    };
+
+    try {
+      // Fazendo a requisição POST
+      var response = await client.post(
+        Uri.parse(
+            '$voalleUrl:45715/external/integrations/thirdparty/opendetailedsolicitation'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+          'ngrok-skip-browser-warning': "true"
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        print('Get adicionado ao Voalle');
+        var body = jsonDecode(response.body);
+        var itemResponse = body['response'];
+        print('Protocólo: ${itemResponse['protocol']}');
+        print(
+            'ID do clienteee: $clientId'); // Aqui você imprime o clientId novamente
+        return response; // Retorna a resposta da requisição
+      } else {
+        print('Erro no Voalle, Status Code: ${response.statusCode}');
+        return null; // Retorna null em caso de erro
+      }
+    } catch (e) {
+      print('Erro na requisição ao Voalle: $e');
+      return null; // Retorna null caso ocorra uma exceção
+    }
+  }
+
+  Future<String> getTokenSerasa({
+    required String username,
+    required String password,
+  }) async {
+    final serasaUrl = 'https://api.serasaexperian.com.br';
+
+    // Codificar o username:password em Base64
+    final credentials = '$username:$password';
+    final encodedCredentials = base64Encode(utf8.encode(credentials));
+
+    // Fazer a requisição POST com o cabeçalho de Autenticação Básica
+    var response = await http.post(
+      Uri.parse('$serasaUrl/security/iam/v1/client-identities/login'),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Basic $encodedCredentials",
+        'ngrok-skip-browser-warning': "true",
+      },
+      body: jsonEncode({}),
+    );
+
+    // Verificar o status da resposta
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      // Decodificar o corpo da resposta JSON
+      var responseData = jsonDecode(response.body);
+
+      // Extrair o accessToken
+      String accessToken = responseData['accessToken'];
+
+      return accessToken;
+    } else {
+      // Caso o código de status não seja 200 ou 201, lançar um erro
+      throw Exception(
+          'Falha ao obter token. Código de status: ${response.statusCode}');
+    }
   }
 
   Future<SerasaModel> getSerasaData({
@@ -318,133 +495,6 @@ class RemoteAuthService {
     } else {
       throw Exception(
           'Erro ao consumir a API do Serasa: ${response.statusCode}');
-    }
-  }
-
-  Future<String> getTokenVoalle() async {
-    // URL da API
-    final url = Uri.parse('$voalleUrl:45700/connect/token');
-
-    // Dados do corpo da requisição
-    final body = {
-      'grant_type': 'client_credentials',
-      'scope': 'syngw',
-      'client_id': 'df0ee088-5f41-4baa-ba45-1454f23d0dcd',
-      'client_secret': '348af78b-4733-4d17-9912-fe44739bd2b0',
-      'syndata':
-          'TWpNMU9EYzVaakk1T0dSaU1USmxaalprWldFd00ySTFZV1JsTTJRMFptUT06WlhsS1ZHVlhOVWxpTTA0d1NXcHZhVnBZU25kTVdFNHdXVmRrY0dKdFkzbE1iVTUyWW0wMWJGa3pVbWxaVXpWcVlqSXdkVmx1U1dsTVEwcFVaVmMxUlZscFNUWkpiVkpwV2xjeGQwMUVRVEJPUkZwbVl6TlNhRm95YkhWYWVVbHpTV3RTYVZaSWJIZGFVMGsyU1c1Q2RtTXpVbTVqYlZaNlNXNHdQUT09OlpUaGtNak0xWWprMFl6bGlORE5tWkRnM01EbGtNalkyWXpBeE1HTTNNR1U9',
-    };
-
-    try {
-      // Enviando a requisição POST
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: body,
-      );
-
-      // Verificando se a requisição foi bem-sucedida
-      if (response.statusCode == 200) {
-        // Se a requisição for bem-sucedida, extrai o token
-        final data = jsonDecode(response.body);
-        return data['access_token']; // Retorna o token
-      } else {
-        // Se não for bem-sucedida, lança um erro
-        throw Exception('Falha ao obter o token: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Erro ao fazer a requisição: $e');
-    }
-  }
-
-  Future addSolicitationInvoiceVoalle({
-    required String? clientId,
-    required String? desc,
-    required String? token,
-    // required String? colaboratorId,
-  }) async {
-    final body = {
-      "incidentStatusId": "4",
-      "personId": clientId,
-      "clientId": clientId,
-      "incidentTypeId": 1702,
-      "contractServiceTagId": 180391,
-      "catalogServiceId": 201,
-      "serviceLevelAgreementId": 11,
-      "catalogServiceItemId": 1,
-      "catalogServiceItemClassId": 1,
-      "assignment": {
-        "title": "Consulta de dados financeiros",
-        "description":
-            "Solicitação aberta automaticamente via Connect Consult APP. Cliente se econtra com $desc",
-        "priority": 1,
-        "beginningDate": "",
-        "finalDate": "",
-        "report": {
-          "beginningDate": "",
-          "finalDate": "",
-          "description":
-              "Solicitação aberta automaticamente via Connect Consult APP. Cliente se econtra com $desc",
-        },
-        "companyPlaceId": 1
-      }
-    };
-    var response = await client.post(
-      Uri.parse(
-          '$voalleUrl:45715/external/integrations/thirdparty/opendetailedsolicitation'),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-        'ngrok-skip-browser-warning': "true"
-      },
-      body: jsonEncode(body),
-    );
-    if (response.statusCode == 200) {
-      print('Get adicionado ao Voalle');
-      var body = jsonDecode(response.body);
-      var itemResponse = body['response'];
-      print('Procolo: ${itemResponse['protocol']}');
-      print('ID do cliente: ${clientId}');
-    } else {
-      print('Erro no Voalle, $e');
-    }
-    return response;
-  }
-
-  Future<String> getTokenSerasa({
-    required String username,
-    required String password,
-  }) async {
-    final serasaUrl = 'https://api.serasaexperian.com.br';
-
-    // Codificar o username:password em Base64
-    final credentials = '$username:$password';
-    final encodedCredentials = base64Encode(utf8.encode(credentials));
-
-    // Fazer a requisição POST com o cabeçalho de Autenticação Básica
-    var response = await http.post(
-      Uri.parse('$serasaUrl/security/iam/v1/client-identities/login'),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Basic $encodedCredentials",
-        'ngrok-skip-browser-warning': "true",
-      },
-      body: jsonEncode({}),
-    );
-
-    // Verificar o status da resposta
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      // Decodificar o corpo da resposta JSON
-      var responseData = jsonDecode(response.body);
-
-      // Extrair o accessToken
-      String accessToken = responseData['accessToken'];
-
-      return accessToken;
-    } else {
-      // Caso o código de status não seja 200 ou 201, lançar um erro
-      throw Exception(
-          'Falha ao obter token. Código de status: ${response.statusCode}');
     }
   }
 }

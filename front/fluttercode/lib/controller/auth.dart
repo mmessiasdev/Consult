@@ -129,6 +129,7 @@ class AuthController extends GetxController {
     required String fullname,
     required String cpf,
     required String resultReq,
+    required String colaboratorId,
   }) async {
     try {
       EasyLoading.show(
@@ -160,6 +161,7 @@ class AuthController extends GetxController {
         var responseVoalle = await RemoteAuthService().getVoalleInvoices(
           cpf: cpf,
           voalleToken: voalleToken,
+          colaboratorId: colaboratorId
         );
       }
     } catch (e) {

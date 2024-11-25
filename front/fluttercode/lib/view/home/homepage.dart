@@ -4,7 +4,6 @@ import 'package:Consult/component/inputdefault.dart';
 import 'package:Consult/component/widgets/header.dart';
 import 'package:Consult/controller/auth.dart';
 import 'package:Consult/view/account/account.dart';
-import 'package:Consult/view/result/resultvoalle.dart';
 import 'package:flutter/material.dart';
 import 'package:Consult/component/colors.dart';
 import 'package:Consult/component/padding.dart';
@@ -27,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   String? token;
   String? fname;
   String? fullname;
+  String? colaboratorId;
 
   var id;
   bool public = false;
@@ -40,6 +40,9 @@ class _HomePageState extends State<HomePage> {
   void getString() async {
     var strToken = await LocalAuthService().getSecureToken("token");
     var strFullname = await LocalAuthService().getFullName("fullname");
+    var strcolaboratorId =
+        await LocalAuthService().getColaboratorId("colaboratorId");
+
     // var strCpf = await LocalAuthService().getCpf("cpf");
 
     // Verifique se o widget ainda está montado antes de chamar setState
@@ -49,6 +52,7 @@ class _HomePageState extends State<HomePage> {
         // cpf.text = strCpf ?? ''; // Usa uma string vazia se strCpf for null
         token = strToken;
         fullname = strFullname;
+        colaboratorId = strcolaboratorId;
       });
     }
   }
@@ -170,9 +174,10 @@ class _HomePageState extends State<HomePage> {
                           Builder(builder: (context) {
                             return GestureDetector(
                               onTap: () {
-                                print(cpf);
+                                print(colaboratorId.toString());
                                 AuthController().requests(
                                     cpf: cpf.text,
+                                    colaboratorId: colaboratorId.toString(),
                                     fullname: fullname.toString(),
                                     resultReq: "Teste");
                               },
