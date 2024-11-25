@@ -97,12 +97,15 @@ class AuthController extends GetxController {
           var email = userData['email'];
           var id = userData['id'];
           var fullname = userData['fullname'];
+          var colaboratorId = userData['personidvoalle'];
+          print(colaboratorId);
 
           await LocalAuthService().storeToken(token);
           await LocalAuthService().storeAccount(
             id: id,
             email: email,
             fullname: fullname,
+            colaboratorId: colaboratorId.toString(),
           );
 
           EasyLoading.showSuccess("Bem vindo ao Consult");

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:Consult/model/openvoalleinvoices.dart';
 import 'package:Consult/model/serasamodel.dart';
 import 'package:flutter/material.dart';
@@ -133,29 +134,32 @@ class RemoteAuthService {
         var body = jsonDecode(response.body);
         var itemCountResponse = body['response'];
         var messages = body['messages']; // Extrai as mensagens da resposta
-
         // Verifica se existe alguma mensagem
         if (messages != null && messages.isNotEmpty) {
           // Verifica as mensagens específicas
           for (var message in messages) {
             if (message['message'] == "Cliente não possui títulos em aberto.") {
-              EasyLoading.show(
-                status: 'Consultando Serasa...',
-                dismissOnTap: false,
-              );
-              // Chama o método para obter o token do Serasa e imprime o token no console
-              String tokenSerasa = await getTokenSerasa(
-                username: '673f76301345a32c97f7c4c4',
-                password: '701b3d5a8MTxwj-96e1-423a-a8ff-c2e69f5dbfaa',
-              );
-              await getSerasaData(tokenSerasa: tokenSerasa, cpf: cpf);
-
+              print(itemCountResponse['contractNumber']);
+              Navigator.of(Get.overlayContext!)
+                  .pushReplacementNamed('/resultapprovedvoalle');
               print(
-                  'Mensagem: Cliente não possui títulos em aberto. - Redirecionando para a verificação do Serasa');
-
+                'Cliente sem faturas em aberto, paga em dias - Redirecionando para tela aprovado',
+              );
+              print(
+                'Mensagem: Cliente não possui títulos em aberto. - Redirecionando para a verificação do Serasa',
+              );
+              addSolicitationInvoiceVoalle(
+                clientId: itemCountResponse['contractNumber'],
+                desc: "solicitação verifica no Serasa",
+                token: voalleToken,
+              );
               return listItens; // Retorna a lista (pode estar vazia) e interrompe a execução
             } else if (message['message'] == "Registro não encontrado.") {
               EasyLoading.show(
+                status: 'Possui Lead criado no Voalle',
+                dismissOnTap: false,
+              );
+              EasyLoading.show(
                 status: 'Consultando Serasa...',
                 dismissOnTap: false,
               );
@@ -165,11 +169,10 @@ class RemoteAuthService {
                 password: '701b3d5a8MTxwj-96e1-423a-a8ff-c2e69f5dbfaa',
               );
               await getSerasaData(tokenSerasa: tokenSerasa, cpf: cpf);
-
+              print(
+                  'Fazendo consulta, cliente não possui registro de faturas geradas');
               print(
                   'Cliente não encontrado na base. Token do Serasa: $tokenSerasa');
-
-              return listItens; // Retorna a lista com dados do Serasa
             }
           }
         }
@@ -183,7 +186,7 @@ class RemoteAuthService {
             // Verifica o status e redireciona para a tela apropriada
             if (status == "Vencida") {
               addSolicitationInvoiceVoalle(
-                  clientId: item['contractNumber'],
+                  clientId: item['contractNumber'].toString(),
                   desc: "com debito em vencimento.",
                   token: voalleToken);
               Navigator.of(Get.overlayContext!)
@@ -202,15 +205,10 @@ class RemoteAuthService {
               listItens.add(Amount.fromJson(item));
             }
           }
-        } else {
-          // Se não houver itens, redireciona para tela de aprovado
-          Navigator.of(Get.overlayContext!)
-              .pushReplacementNamed('/resultapprovedvoalle');
-          print('Nenhum item encontrado ou status não especificado');
         }
       } else {
         EasyLoading.showError(
-            'Servidor do Vaolle com instabilidade no momento. Contate seu supervisor e aguarde um momento.');
+            'Servidor do Voalle com instabilidade no momento. Contate seu supervisor e aguarde um momento.');
 
         // Se a resposta não for 200 (sucesso), lança uma exceção
         throw Exception('Erro ao obter dados: ${response.statusCode}');
@@ -292,6 +290,8 @@ class RemoteAuthService {
           if (score != null && score > 300 && !allNullOrEmpty) {
             Navigator.of(Get.overlayContext!)
                 .pushReplacementNamed('/negativehighscore');
+
+            print(score);
             print(
                 'Negativado e score acima de 300 e a primeira parcela deve ser paga antecipadamente');
             return SerasaModel(reports: listReports); // Retorna após reprovação
@@ -361,6 +361,7 @@ class RemoteAuthService {
     required String? clientId,
     required String? desc,
     required String? token,
+    // required String? colaboratorId,
   }) async {
     final body = {
       "incidentStatusId": "4",
@@ -375,7 +376,7 @@ class RemoteAuthService {
       "assignment": {
         "title": "Consulta de dados financeiros",
         "description":
-            "Solicitação aberta automaticamente via Connect Consult. Cliente se econtra com $desc",
+            "Solicitação aberta automaticamente via Connect Consult APP. Cliente se econtra com $desc",
         "priority": 1,
         "beginningDate": "",
         "finalDate": "",
@@ -383,7 +384,7 @@ class RemoteAuthService {
           "beginningDate": "",
           "finalDate": "",
           "description":
-              "Solicitação aberta automaticamente via Connect Consult. Cliente se econtra com $desc",
+              "Solicitação aberta automaticamente via Connect Consult APP. Cliente se econtra com $desc",
         },
         "companyPlaceId": 1
       }
@@ -398,6 +399,15 @@ class RemoteAuthService {
       },
       body: jsonEncode(body),
     );
+    if (response.statusCode == 200) {
+      print('Get adicionado ao Voalle');
+      var body = jsonDecode(response.body);
+      var itemResponse = body['response'];
+      print('Procolo: ${itemResponse['protocol']}');
+      print('ID do cliente: ${clientId}');
+    } else {
+      print('Erro no Voalle, $e');
+    }
     return response;
   }
 

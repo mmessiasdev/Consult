@@ -9,6 +9,10 @@ import 'package:flutter/services.dart';
 // import 'package:firebase_core/firebase_core.dart';
 // import 'firebase_options.dart';
 
+
+
+// flutter run --release
+
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Required by FlutterConfig
   await dotenv.load(fileName: ".env");
