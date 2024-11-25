@@ -130,56 +130,50 @@ class RemoteAuthService {
         },
       );
 
-      int? clientId = await getClientCredentials(cpf: cpf, token: voalleToken);
-
       // Verifica se a resposta foi bem-sucedida
       if (response.statusCode == 200) {
         var body = jsonDecode(response.body);
         var itemCountResponse = body['response'];
         var messages = body['messages']; // Extrai as mensagens da resposta
-        // Verifica se existe alguma mensagem
-        if (messages != null && messages.isNotEmpty) {
-          // Verifica as mensagens específicas
-          for (var message in messages) {
-            if (message['message'] == "Cliente não possui títulos em aberto.") {
-              // print(itemCountResponse['contractNumber'].toString());
-              addSolicitationInvoiceVoalle(
-                  clientId: clientId.toString(),
-                  colaboratorId: colaboratorId,
-                  desc: "sem pendências até a data da consulta.",
-                  token: voalleToken);
-              Navigator.of(Get.overlayContext!)
-                  .pushReplacementNamed('/resultapprovedvoalle');
-              print(
-                'Cliente sem faturas em aberto, paga em dias - Redirecionando para tela aprovado',
-              );
-              return listItens; // Retorna a lista (pode estar vazia) e interrompe a execução
-            } else if (message['message'] == "Registro não encontrado.") {
-              addSolicitationInvoiceVoalle(
-                  clientId: clientId.toString(),
-                  colaboratorId: colaboratorId,
-                  desc:
-                      "com lead criado, mas sem contrato criado. Encaminahdo para a consulta no Serasa.",
-                  token: voalleToken);
-              EasyLoading.show(
-                status: 'Possui Lead criado no Voalle',
-                dismissOnTap: false,
-              );
-              EasyLoading.show(
-                status: 'Consultando Serasa...',
-                dismissOnTap: false,
-              );
-              // Chama o método para obter o token do Serasa e imprime o token no console
-              String tokenSerasa = await getTokenSerasa(
-                username: '673f76301345a32c97f7c4c4',
-                password: '701b3d5a8MTxwj-96e1-423a-a8ff-c2e69f5dbfaa',
-              );
-              await getSerasaData(tokenSerasa: tokenSerasa, cpf: cpf);
-              print(
-                  'Fazendo consulta, cliente não possui registro de faturas geradas');
-              print(
-                  'Cliente não encontrado na base. Token do Serasa: $tokenSerasa');
-            }
+        var succes = body['success'];
+
+        // Verifica as mensagens específicas
+        for (var message in messages) {
+          if (message['message'] == "Cliente não possui títulos em aberto.") {
+            int? clientId =
+                await getClientCredentials(cpf: cpf, token: voalleToken);
+            // print(itemCountResponse['contractNumber'].toString());
+            addSolicitationInvoiceVoalle(
+              clientId: clientId.toString(),
+              colaboratorId: colaboratorId,
+              desc: "sem pendências até a data da consulta.",
+              token: voalleToken,
+            );
+            Navigator.of(Get.overlayContext!)
+                .pushReplacementNamed('/resultapprovedvoalle');
+            print(
+              'Cliente sem faturas em aberto, paga em dias - Redirecionando para tela aprovado',
+            );
+            return listItens; // Retorna a lista (pode estar vazia) e interrompe a execução
+          } else if (message['message'] == "Registro não encontrado.") {
+            EasyLoading.show(
+              status: 'Possui Lead criado no Voalle',
+              dismissOnTap: false,
+            );
+            EasyLoading.show(
+              status: 'Consultando Serasa...',
+              dismissOnTap: false,
+            );
+            // Chama o método para obter o token do Serasa e imprime o token no console
+            String tokenSerasa = await getTokenSerasa(
+              username: '673f76301345a32c97f7c4c4',
+              password: '701b3d5a8MTxwj-96e1-423a-a8ff-c2e69f5dbfaa',
+            );
+            await getSerasaData(tokenSerasa: tokenSerasa, cpf: cpf);
+            print(
+                'Fazendo consulta, cliente não possui registro de faturas geradas');
+            print(
+                'Cliente não encontrado na base. Token do Serasa: $tokenSerasa');
           }
         }
 
@@ -191,6 +185,8 @@ class RemoteAuthService {
 
             // Verifica o status e redireciona para a tela apropriada
             if (status == "Vencida") {
+              int? clientId =
+                  await getClientCredentials(cpf: cpf, token: voalleToken);
               addSolicitationInvoiceVoalle(
                   clientId: clientId.toString(),
                   colaboratorId: colaboratorId,
@@ -201,6 +197,8 @@ class RemoteAuthService {
               print('Status Vencido - Redirecionando para tela não aprovado');
               break; // Para a execução se o status for "Vencida"
             } else if (status == "Em aberto") {
+              int? clientId =
+                  await getClientCredentials(cpf: cpf, token: voalleToken);
               addSolicitationInvoiceVoalle(
                 clientId: clientId.toString(),
                 colaboratorId: colaboratorId,
