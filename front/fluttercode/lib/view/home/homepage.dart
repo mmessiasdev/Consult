@@ -159,8 +159,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Padding(
                     padding: defaultPadding,
-                    child: Expanded(
-                        child: Column(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -186,7 +185,7 @@ class _HomePageState extends State<HomePage> {
                           ],
                         )
                       ],
-                    )),
+                    ),
                   ),
                   Expanded(
                     child: Padding(

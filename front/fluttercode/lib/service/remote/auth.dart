@@ -137,83 +137,98 @@ class RemoteAuthService {
         var messages = body['messages']; // Extrai as mensagens da resposta
         var succes = body['success'];
 
-        // Verifica as mensagens específicas
-        for (var message in messages) {
-          if (message['message'] == "Cliente não possui títulos em aberto.") {
-            int? clientId =
-                await getClientCredentials(cpf: cpf, token: voalleToken);
-            // print(itemCountResponse['contractNumber'].toString());
-            addSolicitationInvoiceVoalle(
-              clientId: clientId.toString(),
-              colaboratorId: colaboratorId,
-              desc: "sem pendências até a data da consulta.",
-              token: voalleToken,
-            );
-            Navigator.of(Get.overlayContext!)
-                .pushReplacementNamed('/resultapprovedvoalle');
-            print(
-              'Cliente sem faturas em aberto, paga em dias - Redirecionando para tela aprovado',
-            );
-            return listItens; // Retorna a lista (pode estar vazia) e interrompe a execução
-          } else if (message['message'] == "Registro não encontrado.") {
-            EasyLoading.show(
-              status: 'Possui Lead criado no Voalle',
-              dismissOnTap: false,
-            );
-            EasyLoading.show(
-              status: 'Consultando Serasa...',
-              dismissOnTap: false,
-            );
-            // Chama o método para obter o token do Serasa e imprime o token no console
-            String tokenSerasa = await getTokenSerasa(
-              username: '673f76301345a32c97f7c4c4',
-              password: '701b3d5a8MTxwj-96e1-423a-a8ff-c2e69f5dbfaa',
-            );
-            await getSerasaData(tokenSerasa: tokenSerasa, cpf: cpf);
-            print(
-                'Fazendo consulta, cliente não possui registro de faturas geradas');
-            print(
-                'Cliente não encontrado na base. Token do Serasa: $tokenSerasa');
-          }
-        }
-
-        // Se a resposta contiver itens válidos
-        if (itemCountResponse != null && itemCountResponse.isNotEmpty) {
-          for (var i = 0; i < itemCountResponse.length; i++) {
-            var item = itemCountResponse[i];
-            var status = item['billet']['status']; // Obtém o status do boleto
-
-            // Verifica o status e redireciona para a tela apropriada
-            if (status == "Vencida") {
+        if (messages == null) {
+          EasyLoading.show(
+            status: 'Consultando Serasa...',
+            dismissOnTap: false,
+          );
+          // Chama o método para obter o token do Serasa e imprime o token no console
+          String tokenSerasa = await getTokenSerasa(
+            username: '673f76301345a32c97f7c4c4',
+            password: '701b3d5a8MTxwj-96e1-423a-a8ff-c2e69f5dbfaa',
+          );
+          await getSerasaData(tokenSerasa: tokenSerasa, cpf: cpf);
+          print(
+              'Fazendo consulta, cliente possui conexão com faturas vencidas');
+        } else if (messages != null) {
+          // Verifica as mensagens específicas
+          for (var message in messages) {
+            if (message['message'] == "Cliente não possui títulos em aberto.") {
               int? clientId =
                   await getClientCredentials(cpf: cpf, token: voalleToken);
-              addSolicitationInvoiceVoalle(
-                  clientId: clientId.toString(),
-                  colaboratorId: colaboratorId,
-                  desc: "com debito em vencimento.",
-                  token: voalleToken);
-              Navigator.of(Get.overlayContext!)
-                  .pushReplacementNamed('/resultnotapprovedvoalle');
-              print('Status Vencido - Redirecionando para tela não aprovado');
-              break; // Para a execução se o status for "Vencida"
-            } else if (status == "Em aberto") {
-              int? clientId =
-                  await getClientCredentials(cpf: cpf, token: voalleToken);
+              // print(itemCountResponse['contractNumber'].toString());
               addSolicitationInvoiceVoalle(
                 clientId: clientId.toString(),
                 colaboratorId: colaboratorId,
-                desc: "com debito em vencimento.",
+                desc: "sem pendências até a data da consulta.",
                 token: voalleToken,
               );
               Navigator.of(Get.overlayContext!)
                   .pushReplacementNamed('/resultapprovedvoalle');
-              print('Status Em aberto - Redirecionando para tela aprovado');
-              break; // Para a execução se o status for "Em aberto"
-            }
+              print(
+                'Cliente sem faturas em aberto, paga em dias - Redirecionando para tela aprovado',
+              );
+              return listItens; // Retorna a lista (pode estar vazia) e interrompe a execução
+            } else if (message['message'] == "Registro não encontrado.") {
+              EasyLoading.show(
+                status: 'Possui Lead criado no Voalle',
+                dismissOnTap: false,
+              );
+              EasyLoading.show(
+                status: 'Consultando Serasa...',
+                dismissOnTap: false,
+              );
+              // Chama o método para obter o token do Serasa e imprime o token no console
+              String tokenSerasa = await getTokenSerasa(
+                username: '673f76301345a32c97f7c4c4',
+                password: '701b3d5a8MTxwj-96e1-423a-a8ff-c2e69f5dbfaa',
+              );
+              await getSerasaData(tokenSerasa: tokenSerasa, cpf: cpf);
+              print(
+                  'Fazendo consulta, cliente não possui registro de faturas geradas');
+              print(
+                  'Cliente não encontrado na base. Token do Serasa: $tokenSerasa');
+            } // Se a resposta contiver itens válidos
+            if (itemCountResponse != null && itemCountResponse.isNotEmpty) {
+              for (var i = 0; i < itemCountResponse.length; i++) {
+                var item = itemCountResponse[i];
+                var status =
+                    item['billet']['status']; // Obtém o status do boleto
 
-            // Coleta todos os itens com 'expirationDate'
-            if (item['billet']['expirationDate'] != null) {
-              listItens.add(Amount.fromJson(item));
+                // Verifica o status e redireciona para a tela apropriada
+                if (status == "Vencida") {
+                  int? clientId =
+                      await getClientCredentials(cpf: cpf, token: voalleToken);
+                  addSolicitationInvoiceVoalle(
+                      clientId: clientId.toString(),
+                      colaboratorId: colaboratorId,
+                      desc: "com debito em vencimento.",
+                      token: voalleToken);
+                  Navigator.of(Get.overlayContext!)
+                      .pushReplacementNamed('/resultnotapprovedvoalle');
+                  print(
+                      'Status Vencido - Redirecionando para tela não aprovado');
+                  break; // Para a execução se o status for "Vencida"
+                } else if (status == "Em aberto") {
+                  int? clientId =
+                      await getClientCredentials(cpf: cpf, token: voalleToken);
+                  addSolicitationInvoiceVoalle(
+                    clientId: clientId.toString(),
+                    colaboratorId: colaboratorId,
+                    desc: "com debito em vencimento.",
+                    token: voalleToken,
+                  );
+                  Navigator.of(Get.overlayContext!)
+                      .pushReplacementNamed('/resultapprovedvoalle');
+                  print('Status Em aberto - Redirecionando para tela aprovado');
+                  break; // Para a execução se o status for "Em aberto"
+                }
+
+                // Coleta todos os itens com 'expirationDate'
+                if (item['billet']['expirationDate'] != null) {
+                  listItens.add(Amount.fromJson(item));
+                }
+              }
             }
           }
         }
@@ -420,7 +435,6 @@ class RemoteAuthService {
       var responseBody = jsonDecode(response.body);
       var reportsData = responseBody['reports'];
 
-      // Se houver dados, adicione-os à lista de relatórios
       if (reportsData != null && reportsData.isNotEmpty) {
         for (var report in reportsData) {
           var reportData = Reports.fromJson(report);
@@ -428,18 +442,30 @@ class RemoteAuthService {
           // Obtém o valor do score
           var score = reportData.score?.score;
 
-          // Verifica se o score é 0 e se todas as variáveis são nulas ou vazias
-          var pefinResponse = reportData.negativeData?.pefin?.pefinResponse;
-          var refinResponse = reportData.negativeData?.refin?.refinResponse;
-          var notaryResponse = reportData.negativeData?.notary?.notaryResponse;
-          var checkResponse = reportData.negativeData?.check?.checkResponse;
-          var collectionRecordsResponse = reportData
-              .negativeData?.collectionRecords?.collectionRecordsResponse;
+          var pefinResponse = report['negativeData']['pefin']['pefinResponse'];
+          var refinResponse = report['negativeData']['refin']['refinResponse'];
+          var notaryResponse =
+              report['negativeData']['notary']['notaryResponse'];
+          var checkResponse = report['negativeData']['check']['checkResponse'];
+          var collectionRecordsResponse = report['negativeData']
+              ['collectionRecords']['collectionRecordsResponse'];
+
+          // Função auxiliar para verificar se a lista contém dados significativos
+          bool hasData(List? response) {
+            // Verifica se a lista não é nula e tem pelo menos um item com dados
+            return response != null &&
+                response.isNotEmpty &&
+                response.any((e) => e != null);
+          }
+
+          print('Testeee: $refinResponse');
 
           // Verifica se todas as variáveis são nulas ou vazias
           bool allNullOrEmpty =
               (pefinResponse == null || pefinResponse.isEmpty) &&
-                  (refinResponse == null || refinResponse.isEmpty) &&
+                  (refinResponse == null ||
+                      refinResponse.isEmpty ||
+                      refinResponse.every((e) => e == null)) &&
                   (notaryResponse == null || notaryResponse.isEmpty) &&
                   (checkResponse == null || checkResponse.isEmpty) &&
                   (collectionRecordsResponse == null ||
@@ -465,7 +491,6 @@ class RemoteAuthService {
           if (score != null && score > 300 && !allNullOrEmpty) {
             Navigator.of(Get.overlayContext!)
                 .pushReplacementNamed('/negativehighscore');
-
             print(score);
             print(
                 'Negativado e score acima de 300 e a primeira parcela deve ser paga antecipadamente');
