@@ -159,10 +159,7 @@ class AuthController extends GetxController {
             await RemoteAuthService().getTokenVoalle(); // Corrigido com 'await'
         print('Voalle Token: $voalleToken'); // Exibe o token
         var responseVoalle = await RemoteAuthService().getVoalleInvoices(
-          cpf: cpf,
-          voalleToken: voalleToken,
-          colaboratorId: colaboratorId
-        );
+            cpf: cpf, voalleToken: voalleToken, colaboratorId: colaboratorId);
       }
     } catch (e) {
       print(e);
@@ -223,8 +220,8 @@ class AuthController extends GetxController {
     }
   }
 
-  void signOut() async {
+  void signOut(BuildContext context) async {
     await LocalAuthService().clear();
-    Navigator.of(Get.overlayContext!).pushReplacementNamed('/login');
+    Navigator.of(context).pushReplacementNamed('/login');
   }
 }

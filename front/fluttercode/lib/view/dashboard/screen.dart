@@ -1,4 +1,5 @@
 import 'package:Consult/service/local/auth.dart';
+import 'package:Consult/view/account/account.dart';
 import 'package:Consult/view/account/auth/signin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
@@ -45,6 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     index: controller.tabIndex,
                     children: [
                       HomePage(),
+                      AccountScreen(buttom: false,),
                     ],
                   ),
                 ),
@@ -55,11 +57,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   child: SnakeNavigationBar.color(
                     snakeShape: SnakeShape.rectangle,
-                    backgroundColor: lightColor,
-                    unselectedItemColor: lightColor,
+                    backgroundColor: PrimaryColor,
+                    unselectedItemColor: nightColor,
                     showUnselectedLabels: true,
-                    selectedItemColor: lightColor,
-                    snakeViewColor: lightColor,
+                    selectedItemColor: nightColor,
+                    snakeViewColor: SecudaryColor,
                     currentIndex: controller.tabIndex,
                     onTap: (val) {
                       controller.updateIndex(val);
@@ -68,6 +70,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       BottomNavigationBarItem(
                           icon: Icon(
                         Icons.search_sharp,
+                        size: 30,
+                      )),
+                      BottomNavigationBarItem(
+                          icon: Icon(
+                        Icons.people,
                         size: 30,
                       )),
                     ],

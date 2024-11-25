@@ -48,10 +48,6 @@ class LocalAuthService {
   }
 
   Future<void> clear() async {
-    if (_storage == null) {
-      print('Erro: _storage não foi inicializado.');
-      return;
-    }
     try {
       await _storage.deleteAll();
     } catch (e) {

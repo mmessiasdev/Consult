@@ -94,7 +94,9 @@ class _HomePageState extends State<HomePage> {
                             (Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => AccountScreen()),
+                                  builder: (context) => AccountScreen(
+                                        buttom: true,
+                                      )),
                             ));
                           },
                           child: Padding(
@@ -154,6 +156,37 @@ class _HomePageState extends State<HomePage> {
                   ),
                   SizedBox(
                     height: 25,
+                  ),
+                  Padding(
+                    padding: defaultPadding,
+                    child: Expanded(
+                        child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              child: Icon(
+                                Icons.people,
+                                color: lightColor,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            RichDefaultText(
+                              text: 'Olá, \n',
+                              size: 20,
+                              wid: SecundaryText(
+                                  text: '${fullname.toString()}!',
+                                  color: nightColor,
+                                  align: TextAlign.start),
+                            ),
+                          ],
+                        )
+                      ],
+                    )),
                   ),
                   Expanded(
                     child: Padding(
