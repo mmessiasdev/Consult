@@ -25,6 +25,9 @@
     },
     "sector": {
       "type": "string"
+    },
+    "personidvoalle": {
+      "type": "string"
     }
   }
 }
