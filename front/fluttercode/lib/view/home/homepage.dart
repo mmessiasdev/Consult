@@ -10,6 +10,7 @@ import 'package:Consult/component/padding.dart';
 import 'package:Consult/component/texts.dart';
 import 'package:Consult/service/local/auth.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,6 +23,7 @@ class _HomePageState extends State<HomePage> {
   var client = http.Client();
 
   String screen = "online";
+  bool isButtonEnabled = false;
 
   String? token;
   String? fname;
@@ -193,12 +195,19 @@ class _HomePageState extends State<HomePage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          // Campo de entrada com validação
                           InputTextField(
                             textEditingController: cpf,
                             title: "Digite um CPF para consultá-lo",
                             fcolor: nightColor,
                             fill: true,
                             textInputType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter
+                                  .digitsOnly, // Apenas números
+                              LengthLimitingTextInputFormatter(
+                                  13), // Limitar a 13 caracteres
+                            ],
                           ),
                           const SizedBox(
                             height: 50,
@@ -206,19 +215,43 @@ class _HomePageState extends State<HomePage> {
                           Builder(builder: (context) {
                             return GestureDetector(
                               onTap: () {
-                                print(colaboratorId.toString());
-                                AuthController().requests(
+                                if (cpf.text.length >= 11) {
+                                  print(cpf.text);
+                                  AuthController().requests(
                                     cpf: cpf.text,
                                     colaboratorId: colaboratorId.toString(),
                                     fullname: fullname.toString(),
-                                    resultReq: "Teste");
+                                    resultReq: "Teste",
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text(
+                                            'CPF deve ter no mínimo 11 caracteres')),
+                                  );
+                                }
                               },
-                              child: DefaultButton(
-                                text: "Consultar",
-                                padding: defaultPadding,
-                                icon: Icons.keyboard_arrow_right_outlined,
-                                color: SeventhColor,
-                                colorText: lightColor,
+                              child: GestureDetector(
+                                onTap: isButtonEnabled
+                                    ? () {
+                                        print(cpf.text);
+                                        AuthController().requests(
+                                          cpf: cpf.text,
+                                          colaboratorId:
+                                              colaboratorId.toString(),
+                                          fullname: fullname.toString(),
+                                          resultReq: "Teste",
+                                        );
+                                      }
+                                    : null,
+                                child: DefaultButton(
+                                  text: "Consultar",
+                                  padding: defaultPadding,
+                                  icon: Icons.keyboard_arrow_right_outlined,
+                                  color: SeventhColor,
+                                  colorText: lightColor,
+                                  // Desabilita o botão se o CPF for menor que 11 caracteres
+                                ),
                               ),
                             );
                           }),
