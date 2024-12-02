@@ -20,6 +20,7 @@ class RemoteAuthService {
 
   final voalleUrl = dotenv.env["VOALLEBASEURL"];
   final voalleToken = dotenv.env["VOALLETOKEN"];
+  final syndatavoalle = dotenv.env["SYNDATA"];
 
   final serasaUrl = dotenv.env["SERASABASEURL"];
 
@@ -48,7 +49,6 @@ class RemoteAuthService {
       Uri.parse('$url/auth/local'),
       headers: {
         "Content-Type": "application/json",
-        'ngrok-skip-browser-warning': "true"
       },
       body: jsonEncode(body),
     );
@@ -83,7 +83,6 @@ class RemoteAuthService {
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
-        'ngrok-skip-browser-warning': "true",
       },
     );
   }
@@ -92,12 +91,11 @@ class RemoteAuthService {
     required String? colaboratorname,
     required String? cpf,
     required String? token,
-    required String? resultReq,
   }) async {
     final body = {
       "colaboratorname": colaboratorname,
       "cpf": cpf,
-      "result": resultReq,
+      "result": "Result",
     };
     var response = await client.post(
       Uri.parse('$url/requests'),
@@ -105,6 +103,45 @@ class RemoteAuthService {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
         'ngrok-skip-browser-warning': "true"
+      },
+      body: jsonEncode(body),
+    );
+    return response;
+  }
+
+  Future putRequests({
+    required String? token,
+    required String? result,
+    required String? id,
+  }) async {
+    final body = {
+      "result": result,
+    };
+    var response = await client.put(
+      Uri.parse('$url/requests/$id'),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+        'ngrok-skip-browser-warning': "true"
+      },
+      body: jsonEncode(body),
+    );
+    return response;
+  }
+
+  Future putAddRequests({
+    required String? id,
+    required String? result,
+    required String? token,
+  }) async {
+    final body = {
+      "result": result,
+    };
+    var response = await client.put(
+      Uri.parse('$url/requests/$id'),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
       },
       body: jsonEncode(body),
     );
@@ -260,8 +297,7 @@ class RemoteAuthService {
       'scope': 'syngw',
       'client_id': 'df0ee088-5f41-4baa-ba45-1454f23d0dcd',
       'client_secret': '348af78b-4733-4d17-9912-fe44739bd2b0',
-      'syndata':
-          'TWpNMU9EYzVaakk1T0dSaU1USmxaalprWldFd00ySTFZV1JsTTJRMFptUT06WlhsS1ZHVlhOVWxpTTA0d1NXcHZhVnBZU25kTVdFNHdXVmRrY0dKdFkzbE1iVTUyWW0wMWJGa3pVbWxaVXpWcVlqSXdkVmx1U1dsTVEwcFVaVmMxUlZscFNUWkpiVkpwV2xjeGQwMUVRVEJPUkZwbVl6TlNhRm95YkhWYWVVbHpTV3RTYVZaSWJIZGFVMGsyU1c1Q2RtTXpVbTVqYlZaNlNXNHdQUT09OlpUaGtNak0xWWprMFl6bGlORE5tWkRnM01EbGtNalkyWXpBeE1HTTNNR1U9',
+      'syndata': '$syndatavoalle',
     };
 
     try {

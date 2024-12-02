@@ -231,27 +231,13 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 }
                               },
-                              child: GestureDetector(
-                                onTap: isButtonEnabled
-                                    ? () {
-                                        print(cpf.text);
-                                        AuthController().requests(
-                                          cpf: cpf.text,
-                                          colaboratorId:
-                                              colaboratorId.toString(),
-                                          fullname: fullname.toString(),
-                                          resultReq: "Teste",
-                                        );
-                                      }
-                                    : null,
-                                child: DefaultButton(
-                                  text: "Consultar",
-                                  padding: defaultPadding,
-                                  icon: Icons.keyboard_arrow_right_outlined,
-                                  color: SeventhColor,
-                                  colorText: lightColor,
-                                  // Desabilita o botão se o CPF for menor que 11 caracteres
-                                ),
+                              child: DefaultButton(
+                                text: "Consultar",
+                                padding: defaultPadding,
+                                icon: Icons.keyboard_arrow_right_outlined,
+                                color: SeventhColor,
+                                colorText: lightColor,
+                                // Desabilita o botão se o CPF for menor que 11 caracteres
                               ),
                             );
                           }),

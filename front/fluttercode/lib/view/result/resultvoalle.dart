@@ -18,6 +18,27 @@ class ResultApproved extends StatefulWidget {
 }
 
 class _ResultApprovedState extends State<ResultApproved> {
+  String? token;
+
+  bool public = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getString();
+  }
+
+  void getString() async {
+    var strToken = await LocalAuthService().getSecureToken("token");
+
+    // Verifique se o widget ainda está montado antes de chamar setState
+    if (mounted) {
+      setState(() {
+        token = strToken;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -52,7 +73,6 @@ class _ResultApprovedState extends State<ResultApproved> {
                       Icons.check_circle_outlined,
                       color: SeventhColor,
                       size: 100,
-                      
                     ),
                   ],
                 ),
@@ -64,7 +84,8 @@ class _ResultApprovedState extends State<ResultApproved> {
           ),
           GestureDetector(
             onTap: () {
-              AuthController().finishRequest();
+              AuthController().finishRequest(
+                  token: token.toString(), result: "Voalle Approved");
             },
             child: DefaultButton(
               text: "Finalizar",
@@ -92,6 +113,27 @@ class _ResultNotApprovedOpenInvoicesState
     return const Text(
       "Estamos passando por uma manutenção. Entre novamente mais tarde!",
     );
+  }
+
+  String? token;
+
+  bool public = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getString();
+  }
+
+  void getString() async {
+    var strToken = await LocalAuthService().getSecureToken("token");
+
+    // Verifique se o widget ainda está montado antes de chamar setState
+    if (mounted) {
+      setState(() {
+        token = strToken;
+      });
+    }
   }
 
   var voalleToken = RemoteAuthService().getTokenVoalle();
@@ -155,7 +197,8 @@ class _ResultNotApprovedOpenInvoicesState
           ),
           GestureDetector(
             onTap: () {
-              AuthController().finishRequest();
+              AuthController().finishRequest(
+                  token: token.toString(), result: "Voalle Rejected");
             },
             child: DefaultButton(
               text: "Finalizar",

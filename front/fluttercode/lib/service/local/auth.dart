@@ -11,6 +11,14 @@ class LocalAuthService {
     return await _storage.read(key: "token");
   }
 
+  Future<void> storeRequestId(String requestId) async {
+    await _storage.write(key: "requestId", value: requestId);
+  }
+
+  Future<String?> getRequestId(String requestId) async {
+    return await _storage.read(key: "requestId");
+  }
+
   Future<void> storeCpfClient(String CpfClient) async {
     await _storage.write(key: "cpfClient", value: CpfClient);
   }

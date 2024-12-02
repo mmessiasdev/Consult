@@ -1,10 +1,8 @@
 import 'package:Consult/component/buttons.dart';
 import 'package:Consult/component/colors.dart';
-import 'package:Consult/component/containersLoading.dart';
 import 'package:Consult/component/padding.dart';
 import 'package:Consult/component/texts.dart';
 import 'package:Consult/controller/auth.dart';
-import 'package:Consult/model/openvoalleinvoices.dart';
 import 'package:Consult/service/local/auth.dart';
 import 'package:Consult/service/remote/auth.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +73,10 @@ class _LowScoreScreenState extends State<LowScoreScreen> {
               children: [
                 Column(
                   children: [
-                    Image.asset('assets/images/illustrator/illustrator2.png', height: 250,),
+                    Image.asset(
+                      'assets/images/illustrator/illustrator2.png',
+                      height: 250,
+                    ),
                     const SizedBox(
                       height: 50,
                     ),
@@ -83,7 +84,9 @@ class _LowScoreScreenState extends State<LowScoreScreen> {
                         text: "Pendente",
                         color: nightColor,
                         align: TextAlign.center),
-                        SizedBox(height: 10,),
+                    SizedBox(
+                      height: 10,
+                    ),
                     const SizedBox(
                       height: 15,
                     ),
@@ -103,7 +106,9 @@ class _LowScoreScreenState extends State<LowScoreScreen> {
                             "CPF cadastrado não possui Score suficiente no Serasa (abaixo de 300).",
                         color: nightColor,
                         align: TextAlign.center),
-                        SizedBox(height: 10,),
+                    SizedBox(
+                      height: 10,
+                    ),
                     SubTextSized(
                         align: TextAlign.center,
                         text: 'Mediante a pagamento da taxa de 400 reais.',
@@ -119,7 +124,8 @@ class _LowScoreScreenState extends State<LowScoreScreen> {
           ),
           GestureDetector(
             onTap: () {
-              AuthController().finishRequest();
+              AuthController()
+                  .finishRequest(token: token.toString(), result: "Low Score");
             },
             child: DefaultButton(
               text: "Finalizar",

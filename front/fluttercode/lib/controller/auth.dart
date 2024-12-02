@@ -140,10 +140,18 @@ class AuthController extends GetxController {
       var token = await LocalAuthService().getSecureToken("token");
       var result = await RemoteAuthService().addRequests(
         token: token.toString(),
-        resultReq: resultReq.toString(),
         colaboratorname: fullname.toString(),
         cpf: cpf.toString(),
       );
+
+      print(result);
+
+      if (result.statusCode == 200) {
+        var responseBody = jsonDecode(result.body);
+        String requestId = responseBody['id'].toString();
+        await LocalAuthService().storeRequestId(requestId);
+        print("IDDDDD ${requestId}");
+      }
 
       await LocalAuthService().storeCpfClient(cpf);
 
@@ -169,49 +177,18 @@ class AuthController extends GetxController {
     }
   }
 
-  void finishRequest() async {
+  void finishRequest({required String result, required String token}) async {
     try {
       EasyLoading.show(
         status: 'Loading...',
         dismissOnTap: false,
       );
-      // var token = await LocalAuthService().getSecureToken("token");
-      // var result = await RemoteAuthService().addRequests(
-      //   token: token.toString(),
-      //   resultReq: resultReq.toString(),
-      //   colaboratorname: fullname.toString(),
-      //   cpf: cpf.toString(),
-      // );
+      var idRequest = await LocalAuthService().getRequestId("requestId");
+
+      RemoteAuthService()
+          .putRequests(token: token, result: result, id: idRequest);
       EasyLoading.showSuccess("Finalizando procura");
       Navigator.of(Get.overlayContext!).pushReplacementNamed('/');
-
-      // if (result.statusCode == 200) {
-      //   int postId = json.decode(result.body)['id'];
-      //   var url = Uri.parse('$urlEnv/upload');
-      //   var request = http.MultipartRequest("POST", url);
-      //   request.files.add(await http.MultipartFile.fromBytes(
-      //     'files',
-      //     selectFile!,
-      //     contentType: MediaType('application', 'pdf'),
-      //     filename: fileName ?? "Consult File",
-      //   ));
-
-      //   request.files.add(await http.MultipartFile.fromString("ref", "post"));
-      //   request.files
-      //       .add(await http.MultipartFile.fromString("refId", "${postId}"));
-
-      //   request.files
-      //       .add(await http.MultipartFile.fromString("field", "files"));
-
-      //   request.headers.addAll({"Authorization": "Bearer $token"});
-      //   request.send().then((response) {
-      //     if (response.statusCode == 200) {
-      //       print("FileUpload Successfuly");
-      //     } else {
-      //       print("FileUpload Error");
-      //     }
-      //   });
-      // }
     } catch (e) {
       print(e);
       EasyLoading.showError('Alguma coisa deu errado.');
