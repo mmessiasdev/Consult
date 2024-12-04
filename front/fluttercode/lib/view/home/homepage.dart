@@ -40,10 +40,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   void getString() async {
-    var strToken = await LocalAuthService().getSecureToken("token");
-    var strFullname = await LocalAuthService().getFullName("fullname");
+    var strToken = await LocalAuthService().getSecureToken();
+    var strFullname = await LocalAuthService().getFullName();
     var strcolaboratorId =
-        await LocalAuthService().getColaboratorId("colaboratorId");
+        await LocalAuthService().getColaboratorId();
 
     // var strCpf = await LocalAuthService().getCpf("cpf");
 

@@ -27,7 +27,7 @@ class _NoNegativeScreenState extends State<NoNegativeScreen> {
   }
 
   void getString() async {
-    var strToken = await LocalAuthService().getSecureToken("token");
+    var strToken = await LocalAuthService().getSecureToken();
 
     // Verifique se o widget ainda está montado antes de chamar setState
     if (mounted) {

@@ -33,8 +33,8 @@ class _LowScoreScreenState extends State<LowScoreScreen> {
   }
 
   void getString() async {
-    var strToken = await LocalAuthService().getSecureToken("token");
-    var strFullname = await LocalAuthService().getFullName("fullname");
+    var strToken = await LocalAuthService().getSecureToken();
+    var strFullname = await LocalAuthService().getFullName();
 
     // Verifique se o widget ainda está montado antes de chamar setState
     if (mounted) {

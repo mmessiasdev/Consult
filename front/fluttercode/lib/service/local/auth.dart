@@ -1,14 +1,43 @@
+import 'dart:convert';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:html' as html;
 
 class LocalAuthService {
-  final _storage = FlutterSecureStorage();
+  // final _storage = FlutterSecureStorage();
+
+  // Future<void> storeToken(String token) async {
+  //   await _storage.write(key: "token", value: token);
+  // }
+
+  // Future<String?> getSecureToken(String token) async {
+  //   return await _storage.read(key: "token");
+  // }
+
+  final FlutterSecureStorage _storage = FlutterSecureStorage();
 
   Future<void> storeToken(String token) async {
-    await _storage.write(key: "token", value: token);
+    if (_isWeb()) {
+      html.window.localStorage['token'] = token;
+    } else {
+      await _storage.write(key: "token", value: token);
+    }
   }
 
-  Future<String?> getSecureToken(String token) async {
-    return await _storage.read(key: "token");
+  Future<String?> getSecureToken() async {
+    if (_isWeb()) {
+      return html.window.localStorage['token'];
+    } else {
+      return await _storage.read(key: "token");
+    }
+  }
+
+  bool _isWeb() {
+    try {
+      return identical(0, 0.0); // Verificação para Web
+    } catch (e) {
+      return false;
+    }
   }
 
   Future<void> storeRequestId(String requestId) async {
@@ -27,32 +56,78 @@ class LocalAuthService {
     return await _storage.read(key: "cpfClient");
   }
 
-  Future storeAccount({
+  // Armazenar os dados da conta
+  Future<void> storeAccount({
     required String email,
     required String fullname,
     required int id,
     required String colaboratorId,
   }) async {
-    await _storage.write(key: "id", value: id.toString());
-    await _storage.write(key: "email", value: email);
-    await _storage.write(key: "fullname", value: fullname);
-    await _storage.write(key: "colaboratorId", value: colaboratorId);
+    if (_isWeb()) {
+      html.window.localStorage['account'] = jsonEncode({
+        "id": id.toString(),
+        "email": email,
+        "fullname": fullname,
+        "colaboratorId": colaboratorId,
+      });
+    } else {
+      await _storage.write(key: "id", value: id.toString());
+      await _storage.write(key: "email", value: email);
+      await _storage.write(key: "fullname", value: fullname);
+      await _storage.write(key: "colaboratorId", value: colaboratorId);
+    }
   }
 
-  Future<String?> getEmail(String unicKey) async {
-    return await _storage.read(key: "email");
+  // Recuperar email
+  Future<String?> getEmail() async {
+    if (_isWeb()) {
+      final account = html.window.localStorage['account'];
+      if (account != null) {
+        return jsonDecode(account)['email'];
+      }
+      return null;
+    } else {
+      return await _storage.read(key: "email");
+    }
   }
 
-  Future<String?> getId(String unicKey) async {
-    return await _storage.read(key: "id");
+  // Recuperar ID
+  Future<String?> getId() async {
+    if (_isWeb()) {
+      final account = html.window.localStorage['account'];
+      if (account != null) {
+        return jsonDecode(account)['id'];
+      }
+      return null;
+    } else {
+      return await _storage.read(key: "id");
+    }
   }
 
-  Future<String?> getFullName(String unicKey) async {
-    return await _storage.read(key: "fullname");
+  // Recuperar fullname
+  Future<String?> getFullName() async {
+    if (_isWeb()) {
+      final account = html.window.localStorage['account'];
+      if (account != null) {
+        return jsonDecode(account)['fullname'];
+      }
+      return null;
+    } else {
+      return await _storage.read(key: "fullname");
+    }
   }
 
-  Future<String?> getColaboratorId(String unicKey) async {
-    return await _storage.read(key: "colaboratorId");
+  // Recuperar colaboratorId
+  Future<String?> getColaboratorId() async {
+    if (_isWeb()) {
+      final account = html.window.localStorage['account'];
+      if (account != null) {
+        return jsonDecode(account)['colaboratorId'];
+      }
+      return null;
+    } else {
+      return await _storage.read(key: "colaboratorId");
+    }
   }
 
   Future<void> clear() async {

@@ -98,7 +98,8 @@ class AuthController extends GetxController {
           var id = userData['id'];
           var fullname = userData['fullname'];
           var colaboratorId = userData['personidvoalle'];
-          print(colaboratorId);
+          
+          print('MOSTAR ID DO COLABORADOR $colaboratorId');
 
           await LocalAuthService().storeToken(token);
           await LocalAuthService().storeAccount(
@@ -107,6 +108,10 @@ class AuthController extends GetxController {
             fullname: fullname,
             colaboratorId: colaboratorId.toString(),
           );
+
+          var tokenStore = LocalAuthService().getSecureToken();
+
+          print(tokenStore);
 
           EasyLoading.showSuccess("Bem vindo ao Consult");
           Navigator.of(Get.overlayContext!).pushReplacementNamed('/');
@@ -137,7 +142,7 @@ class AuthController extends GetxController {
         dismissOnTap: false,
       );
 
-      var token = await LocalAuthService().getSecureToken("token");
+      var token = await LocalAuthService().getSecureToken();
       var result = await RemoteAuthService().addRequests(
         token: token.toString(),
         colaboratorname: fullname.toString(),
