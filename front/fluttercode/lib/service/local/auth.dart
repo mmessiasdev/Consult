@@ -151,10 +151,12 @@ class LocalAuthService {
   }
 
   Future<void> clear() async {
-    try {
-      await _storage.deleteAll();
-    } catch (e) {
-      print('Erro ao apagar dados: $e');
+    if (_isWeb()) {
+      html.window.localStorage
+          .clear(); // Limpa o armazenamento local no navegador
+    } else {
+      await _storage
+          .deleteAll(); // Limpa o armazenamento seguro em dispositivos móveis
     }
   }
 }
