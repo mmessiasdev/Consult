@@ -98,7 +98,7 @@ class AuthController extends GetxController {
           var id = userData['id'];
           var fullname = userData['fullname'];
           var colaboratorId = userData['personidvoalle'];
-          
+
           print('MOSTAR ID DO COLABORADOR $colaboratorId');
 
           await LocalAuthService().storeToken(token);
@@ -160,7 +160,7 @@ class AuthController extends GetxController {
 
       await LocalAuthService().storeCpfClient(cpf);
 
-      var cpfClient = LocalAuthService().getCpfClient("cpfClient");
+      var cpfClient = LocalAuthService().getCpfClient();
 
       print(cpfClient.toString());
       print(result.statusCode);
@@ -188,7 +188,7 @@ class AuthController extends GetxController {
         status: 'Loading...',
         dismissOnTap: false,
       );
-      var idRequest = await LocalAuthService().getRequestId("requestId");
+      var idRequest = await LocalAuthService().getRequestId();
 
       RemoteAuthService()
           .putRequests(token: token, result: result, id: idRequest);

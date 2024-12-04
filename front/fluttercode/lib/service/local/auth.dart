@@ -14,6 +14,14 @@ class LocalAuthService {
   //   return await _storage.read(key: "token");
   // }
 
+  bool _isWeb() {
+    try {
+      return identical(0, 0.0); // Verificação para Web
+    } catch (e) {
+      return false;
+    }
+  }
+
   final FlutterSecureStorage _storage = FlutterSecureStorage();
 
   Future<void> storeToken(String token) async {
@@ -32,28 +40,40 @@ class LocalAuthService {
     }
   }
 
-  bool _isWeb() {
-    try {
-      return identical(0, 0.0); // Verificação para Web
-    } catch (e) {
-      return false;
+  // Armazenar CPF do cliente
+  Future<void> storeCpfClient(String cpfClient) async {
+    if (_isWeb()) {
+      html.window.localStorage['cpfClient'] = cpfClient;
+    } else {
+      await _storage.write(key: "cpfClient", value: cpfClient);
     }
   }
 
+  // Recuperar CPF do cliente
+  Future<String?> getCpfClient() async {
+    if (_isWeb()) {
+      return html.window.localStorage['cpfClient'];
+    } else {
+      return await _storage.read(key: "cpfClient");
+    }
+  }
+
+  // Armazenar requestId
   Future<void> storeRequestId(String requestId) async {
-    await _storage.write(key: "requestId", value: requestId);
+    if (_isWeb()) {
+      html.window.localStorage['requestId'] = requestId;
+    } else {
+      await _storage.write(key: "requestId", value: requestId);
+    }
   }
 
-  Future<String?> getRequestId(String requestId) async {
-    return await _storage.read(key: "requestId");
-  }
-
-  Future<void> storeCpfClient(String CpfClient) async {
-    await _storage.write(key: "cpfClient", value: CpfClient);
-  }
-
-  Future<String?> getCpfClient(String CpfClient) async {
-    return await _storage.read(key: "cpfClient");
+  // Recuperar requestId
+  Future<String?> getRequestId() async {
+    if (_isWeb()) {
+      return html.window.localStorage['requestId'];
+    } else {
+      return await _storage.read(key: "requestId");
+    }
   }
 
   // Armazenar os dados da conta
