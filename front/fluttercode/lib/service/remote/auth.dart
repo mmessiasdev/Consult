@@ -421,8 +421,6 @@ class RemoteAuthService {
     required String username,
     required String password,
   }) async {
-    // final serasaUrl = 'https://uat-api.serasaexperian.com.br';
-
     // Codificar o username:password em Base64
     final credentials = '${usernameSerasa}:${passwordSerasa}';
     final encodedCredentials = base64Encode(utf8.encode(credentials));
@@ -430,8 +428,7 @@ class RemoteAuthService {
 
     // Fazer a requisição POST com o cabeçalho de Autenticação Básica
     var response = await http.post(
-      Uri.parse(
-          'https://uat-api.serasaexperian.com.br/security/iam/v1/client-identities/login'),
+      Uri.parse('${serasaBaseUrl}/security/iam/v1/client-identities/login'),
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Basic $encodedCredentials",
@@ -462,7 +459,7 @@ class RemoteAuthService {
     List<Reports> listReports = [];
     var response = await client.get(
       Uri.parse(
-          'https://uat-api.serasaexperian.com.br/credit-services/person-information-report/v1/creditreport?reportName=RELATORIO_BASICO_PF_PME'), // $cmsBaseUrl da API
+          '${serasaBaseUrl}/credit-services/person-information-report/v1/creditreport?reportName=RELATORIO_BASICO_PF_PME'), // $cmsBaseUrl da API
       headers: {
         'Authorization': 'Bearer $tokenSerasa',
         'X-Document-id': '$cpf', // Substitua com o ID do documento
