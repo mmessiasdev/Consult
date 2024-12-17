@@ -1,11 +1,11 @@
 {
-    "name": "fluttercode",
-    "short_name": "fluttercode",
+    "name": "Consult",
+    "short_name": "Consult",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "By @mmessiasdev",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

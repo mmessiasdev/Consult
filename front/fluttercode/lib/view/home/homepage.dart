@@ -42,8 +42,7 @@ class _HomePageState extends State<HomePage> {
   void getString() async {
     var strToken = await LocalAuthService().getSecureToken();
     var strFullname = await LocalAuthService().getFullName();
-    var strcolaboratorId =
-        await LocalAuthService().getColaboratorId();
+    var strcolaboratorId = await LocalAuthService().getColaboratorId();
 
     // var strCpf = await LocalAuthService().getCpf("cpf");
 
@@ -145,108 +144,127 @@ class _HomePageState extends State<HomePage> {
     return token == null
         ? const SizedBox()
         : SafeArea(
-            child: SizedBox(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: defaultPaddingHorizon,
-                    child: MainHeader(
-                      title: "Connect Consult",
-                      icon: Icons.menu,
-                      onClick: () => _showDraggableScrollableSheet(context),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  Padding(
-                    padding: defaultPadding,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // Detecta se é uma tela grande (WEB ou TABLET)
+                bool isLargeScreen = constraints.maxWidth > 800;
+
+                return Center(
+                  child: SizedBox(
+                    width: isLargeScreen
+                        ? 600
+                        : double
+                            .infinity, // Centraliza e limita a largura em telas grandes
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Row(
-                          children: [
-                            CircleAvatar(
-                              child: Icon(
-                                Icons.people,
-                                color: lightColor,
-                              ),
+                        Padding(
+                          padding: defaultPaddingHorizon,
+                          child: MainHeader(
+                            title: "Connect Consult",
+                            icon: Icons.menu,
+                            onClick: () =>
+                                _showDraggableScrollableSheet(context),
+                          ),
+                        ),
+                        const SizedBox(height: 25),
+                        Padding(
+                          padding: defaultPadding,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    child: Icon(
+                                      Icons.people,
+                                      color: lightColor,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  RichDefaultText(
+                                    text: 'Olá, \n',
+                                    size: 20,
+                                    wid: SecundaryText(
+                                      text: '${fullname.toString()}!',
+                                      color: nightColor,
+                                      align: TextAlign.start,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: defaultPadding,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: isLargeScreen
+                                      ? 400
+                                      : double.infinity, // Ajusta largura
+                                  child: InputTextField(
+                                    textEditingController: cpf,
+                                    title: "Digite um CPF para consultá-lo",
+                                    fcolor: nightColor,
+                                    fill: true,
+                                    textInputType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(13),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 50),
+                                GestureDetector(
+                                  onTap: () {
+                                    if (cpf.text.length >= 11) {
+                                      print(cpf.text);
+                                      AuthController().requests(
+                                        cpf: cpf.text,
+                                        colaboratorId: colaboratorId.toString(),
+                                        fullname: fullname.toString(),
+                                        resultReq: "Wait Result",
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'CPF deve ter no mínimo 11 caracteres'),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: SizedBox(
+                                    width: isLargeScreen
+                                        ? 250
+                                        : double
+                                            .infinity, // Largura do botão em telas grandes
+                                    child: DefaultButton(
+                                      text: "Consultar",
+                                      padding: defaultPadding,
+                                      icon: Icons.keyboard_arrow_right_outlined,
+                                      color: SeventhColor,
+                                      colorText: lightColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(
-                              width: 15,
-                            ),
-                            RichDefaultText(
-                              text: 'Olá, \n',
-                              size: 20,
-                              wid: SecundaryText(
-                                  text: '${fullname.toString()}!',
-                                  color: nightColor,
-                                  align: TextAlign.start),
-                            ),
-                          ],
-                        )
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: defaultPadding,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Campo de entrada com validação
-                          InputTextField(
-                            textEditingController: cpf,
-                            title: "Digite um CPF para consultá-lo",
-                            fcolor: nightColor,
-                            fill: true,
-                            textInputType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter
-                                  .digitsOnly, // Apenas números
-                              LengthLimitingTextInputFormatter(
-                                  13), // Limitar a 13 caracteres
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 50,
-                          ),
-                          Builder(builder: (context) {
-                            return GestureDetector(
-                              onTap: () {
-                                if (cpf.text.length >= 11) {
-                                  print(cpf.text);
-                                  AuthController().requests(
-                                    cpf: cpf.text,
-                                    colaboratorId: colaboratorId.toString(),
-                                    fullname: fullname.toString(),
-                                    resultReq: "Teste",
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text(
-                                            'CPF deve ter no mínimo 11 caracteres')),
-                                  );
-                                }
-                              },
-                              child: DefaultButton(
-                                text: "Consultar",
-                                padding: defaultPadding,
-                                icon: Icons.keyboard_arrow_right_outlined,
-                                color: SeventhColor,
-                                colorText: lightColor,
-                                // Desabilita o botão se o CPF for menor que 11 caracteres
-                              ),
-                            );
-                          }),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                );
+              },
             ),
           );
   }
