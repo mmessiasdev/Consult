@@ -225,7 +225,6 @@ class _HomePageState extends State<HomePage> {
                                 GestureDetector(
                                   onTap: () {
                                     if (cpf.text.length >= 11) {
-                                      print(cpf.text);
                                       AuthController().requests(
                                         cpf: cpf.text,
                                         colaboratorId: colaboratorId.toString(),

@@ -54,112 +54,126 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-      backgroundColor: lightColor,
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            Padding(
-              padding: defaultPaddingHorizon,
-              child: MainHeader(title: "Connect Consult", onClick: () {}),
-            ),
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentPage = index;
-                  });
-                },
-                itemCount: _pages.length,
-                itemBuilder: (context, index) {
-                  return _pages[index];
-                },
-              ),
-            ),
-            SizedBox(
-              height: 200,
+      child: Scaffold(
+        backgroundColor: lightColor,
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            // Determina se a largura da tela é maior que um valor específico para desktop
+            bool isDesktop = constraints.maxWidth > 800;
+
+            return Form(
+              key: _formKey,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  GestureDetector(
-                      onTap: () {
-                        if (_currentPage == _pages.length - 1) {
-                          // Se for a última página, finalize o tutorial
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SignInScreen(),
-                            ),
-                          );
-                        } else {
-                          // Caso contrário, vá para a próxima página
-                          _pageController.nextPage(
-                            duration: Duration(milliseconds: 300),
-                            curve: Curves.easeIn,
-                          );
-                        }
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          DefaultCircleButton(
-                            color: PrimaryColor,
-                            iconColor: lightColor,
-                            onClick: () {
-                              if (_currentPage == _pages.length - 1) {
-                                // Se for a última página, finalize o tutorial
-                                if (_formKey.currentState!.validate()) {
-                                  authController.signIn(
-                                      email: emailController.text,
-                                      password: passwordController.text);
-                                }
-                              } else {
-                                // Caso contrário, vá para a próxima página
-                                _pageController.nextPage(
-                                  duration: Duration(milliseconds: 500),
-                                  curve: Curves.easeIn,
-                                );
-                              }
+                  SizedBox(
+                    width: isDesktop ? 600 : double.infinity,
+                    child: Padding(
+                      padding: defaultPaddingHorizon,
+                      child:
+                          MainHeader(title: "Connect Consult", onClick: () {}),
+                    ),
+                  ),
+                  Expanded(
+                    child: isDesktop
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Para telas grandes (desktop), centraliza a área de login em uma coluna
+                              Container(
+                                width: 600, // Largura fixa para desktop
+                                child: PageView.builder(
+                                  controller: _pageController,
+                                  onPageChanged: (index) {
+                                    setState(() {
+                                      _currentPage = index;
+                                    });
+                                  },
+                                  itemCount: _pages.length,
+                                  itemBuilder: (context, index) {
+                                    return _pages[index];
+                                  },
+                                ),
+                              ),
+                            ],
+                          )
+                        : PageView.builder(
+                            controller: _pageController,
+                            onPageChanged: (index) {
+                              setState(() {
+                                _currentPage = index;
+                              });
+                            },
+                            itemCount: _pages.length,
+                            itemBuilder: (context, index) {
+                              return _pages[index];
                             },
                           ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          // RichDefaultText(
-                          //   text: 'Não tem conta? ',
-                          //   size: 12,
-                          //   wid: GestureDetector(
-                          //     onTap: () {
-                          //       (
-                          //         Navigator.pushReplacement(
-                          //           context,
-                          //           MaterialPageRoute(
-                          //             builder: (context) => SignUpScreen(),
-                          //           ),
-                          //         ),
-                          //       );
-                          //     },
-                          //     child: SubText(
-                          //       text: 'Crie uma aqui!',
-                          //       align: TextAlign.start,
-                          //       color: PrimaryColor,
-                          //     ),
-                          //   ),
-                          // )
-                        ],
-                      )),
+                  ),
                   SizedBox(
-                    height: 10,
+                    height: 200,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            if (_currentPage == _pages.length - 1) {
+                              // Se for a última página, finalize o tutorial
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SignInScreen(),
+                                ),
+                              );
+                            } else {
+                              // Caso contrário, vá para a próxima página
+                              _pageController.nextPage(
+                                duration: Duration(milliseconds: 300),
+                                curve: Curves.easeIn,
+                              );
+                            }
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              DefaultCircleButton(
+                                color: PrimaryColor,
+                                iconColor: lightColor,
+                                onClick: () {
+                                  if (_currentPage == _pages.length - 1) {
+                                    // Se for a última página, finalize o tutorial
+                                    if (_formKey.currentState!.validate()) {
+                                      authController.signIn(
+                                          email: emailController.text,
+                                          password: passwordController.text);
+                                    }
+                                  } else {
+                                    // Caso contrário, vá para a próxima página
+                                    _pageController.nextPage(
+                                      duration: Duration(milliseconds: 500),
+                                      curve: Curves.easeIn,
+                                    );
+                                  }
+                                },
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+            );
+          },
         ),
       ),
-    ));
+    );
   }
 }
 

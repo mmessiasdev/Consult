@@ -29,20 +29,16 @@ class DefaultTitle extends StatelessWidget {
     return Column(
       children: [
         SizedBox(
-          width: double.infinity,
           child: Container(
               margin: const EdgeInsets.only(top: 25),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * .8,
-                    child: PrimaryText(
-                      text: title,
-                      color: nightColor,
-                      align: align,
-                    ),
+                  PrimaryText(
+                    text: title,
+                    color: nightColor,
+                    align: align,
                   ),
                   buttom == true
                       ? GestureDetector(

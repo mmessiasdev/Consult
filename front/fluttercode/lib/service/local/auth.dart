@@ -72,23 +72,12 @@
 //   }
 // }
 
-
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:html' as html;
 
 class LocalAuthService {
-  // final _storage = FlutterSecureStorage();
-
-  // Future<void> storeToken(String token) async {
-  //   await _storage.write(key: "token", value: token);
-  // }
-
-  // Future<String?> getSecureToken(String token) async {
-  //   return await _storage.read(key: "token");
-  // }
-
   bool _isWeb() {
     try {
       return identical(0, 0.0); // Verificação para Web

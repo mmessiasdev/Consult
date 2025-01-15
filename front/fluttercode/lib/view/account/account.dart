@@ -48,65 +48,72 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: lightColor,
-      child: Padding(
-        padding: defaultPaddingHorizon,
-        child: ListView(
-          children: [
-            DefaultTitle(
-              buttom: widget.buttom,
-              title: "Seu perfil.",
-            ),
-            Column(
-              children: [
-                InfoText(
-                  title: "Nome:",
-                  stitle: fullname == "null" ? "" : fullname,
-                  icon: Icons.people,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                InfoText(
-                  title: "Email:",
-                  stitle: email == "null" ? "" : email,
-                  icon: Icons.email,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                // InfoText(title: "Username:", stitle: cpf == "null" ? "" : cpf),
-                SizedBox(
-                  height: 70,
-                ),
-                DefaultTitleButton(
-                  title: email == "null" ? "Entrar na conta" : "Sair da conta",
-                  onClick: () {
-                    if (token != "null") {
-                      authController.signOut(context);
-                      // Navigator.pop(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => const SignInScreen(),
-                      //   ),
-                      // );
-                    } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignInScreen(),
+    return Scaffold(
+      backgroundColor: lightColor,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // Detecta se a largura da tela é maior que 800 pixels (ex: desktop)
+          bool isDesktop = constraints.maxWidth > 800;
+
+          // Se for desktop, usar um layout mais espaçado e centralizado
+          return Center(
+            child: SizedBox(
+              width: isDesktop ? 600 : double.infinity,
+              child: Padding(
+                padding: defaultPaddingHorizon, // Mais compacto para mobile
+                child: ListView(
+                  children: [
+                    DefaultTitle(
+                      buttom: widget.buttom,
+                      title: "Seu perfil",
+                    ),
+                    Column(
+                      crossAxisAlignment: isDesktop
+                          ? CrossAxisAlignment.start
+                          : CrossAxisAlignment
+                              .center, // Ajusta a alinhamento conforme o tamanho da tela
+                      children: [
+                        InfoText(
+                          title: "Nome:",
+                          stitle: fullname == "null" ? "" : fullname,
+                          icon: Icons.people,
                         ),
-                      );
-                    }
-                  },
-                  color: FifthColor,
-                  iconColor: lightColor,
+                        SizedBox(height: 20),
+                        InfoText(
+                          title: "Email:",
+                          stitle: email == "null" ? "" : email,
+                          icon: Icons.email,
+                        ),
+                        SizedBox(height: 20),
+                        // InfoText(title: "Username:", stitle: cpf == "null" ? "" : cpf),
+                        SizedBox(height: 70),
+                        DefaultTitleButton(
+                          title: email == "null"
+                              ? "Entrar na conta"
+                              : "Sair da conta",
+                          onClick: () {
+                            if (token != "null") {
+                              authController.signOut(context);
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SignInScreen(),
+                                ),
+                              );
+                            }
+                          },
+                          color: FifthColor,
+                          iconColor: lightColor,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

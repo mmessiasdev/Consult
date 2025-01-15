@@ -199,7 +199,6 @@ class RemoteAuthService {
             if (message['message'] == "Cliente não possui títulos em aberto.") {
               int? clientId =
                   await getClientCredentials(cpf: cpf, token: voalleToken);
-              // print(itemCountResponse['contractNumber'].toString());
               addSolicitationInvoiceVoalle(
                 clientId: clientId.toString(),
                 colaboratorId: colaboratorId,
@@ -230,7 +229,7 @@ class RemoteAuthService {
               print(
                   'Fazendo consulta, cliente não possui registro de faturas geradas');
               print(
-                  'Cliente não encontrado na base. Token do Serasa: $tokenSerasa');
+                  'Cliente não encontrado na base. Acessando Serasa');
             } // Se a resposta contiver itens válidos
             if (itemCountResponse != null && itemCountResponse.isNotEmpty) {
               for (var i = 0; i < itemCountResponse.length; i++) {
@@ -286,7 +285,6 @@ class RemoteAuthService {
       // Trata qualquer erro na requisição ou no processo
       EasyLoading.showError(
           'Erro ao processar dados. Verifique se os dados estão corretos. O sistema não encontrou essa credencial.');
-      print('Erro na requisição ou ao processar os dados: $e');
     }
 
     // Retorna a lista (pode estar vazia)
@@ -346,7 +344,6 @@ class RemoteAuthService {
       var body = jsonDecode(response.body);
       var itemResponse = body['response'];
       int clientId = itemResponse['id']; // Aqui estamos pegando o 'id'
-      print('ID do cliente: $clientId');
       return clientId; // Retorna o clientId para ser usado na próxima requisição
     } else {
       print('Erro na pesquisa do cliente');
@@ -403,9 +400,6 @@ class RemoteAuthService {
         print('Get adicionado ao Voalle');
         var body = jsonDecode(response.body);
         var itemResponse = body['response'];
-        print('Protocólo: ${itemResponse['protocol']}');
-        print(
-            'ID do clienteee: $clientId'); // Aqui você imprime o clientId novamente
         return response; // Retorna a resposta da requisição
       } else {
         print('Erro no Voalle, Status Code: ${response.statusCode}');
@@ -424,7 +418,6 @@ class RemoteAuthService {
     // Codificar o username:password em Base64
     final credentials = '${usernameSerasa}:${passwordSerasa}';
     final encodedCredentials = base64Encode(utf8.encode(credentials));
-    print(encodedCredentials);
 
     // Fazer a requisição POST com o cabeçalho de Autenticação Básica
     var response = await http.post(
@@ -469,7 +462,6 @@ class RemoteAuthService {
 
     // Verifica se a resposta foi bem-sucedida
     if (response.statusCode == 200) {
-      print("Deu certo!");
       var responseBody = jsonDecode(response.body);
       var reportsData = responseBody['reports'];
 
@@ -495,8 +487,6 @@ class RemoteAuthService {
                 response.isNotEmpty &&
                 response.any((e) => e != null);
           }
-
-          print('Testeee: $refinResponse');
 
           // Verifica se todas as variáveis são nulas ou vazias
           bool allNullOrEmpty =

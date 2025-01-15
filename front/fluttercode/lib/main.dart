@@ -23,10 +23,6 @@ Future main() async {
   //   options: DefaultFirebaseOptions.currentPlatform,
   // );
 
-  // OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-  // OneSignal.initialize("f49b725b-18ff-4f6e-b7b1-9bcadb116e48");
-  // OneSignal.Notifications.requestPermission(true);
-
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: lightColor, // cor da barra superior
     statusBarIconBrightness: Brightness.light, // ícones da barra superior
