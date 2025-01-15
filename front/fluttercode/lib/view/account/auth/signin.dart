@@ -1,13 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:Consult/component/colors.dart';
 import 'package:Consult/component/defaultButton.dart';
 import 'package:Consult/component/padding.dart';
-import 'package:Consult/controller/auth.dart';
-import 'package:Consult/view/account/auth/signup.dart';
-import 'package:flutter/material.dart';
-import 'package:Consult/component/colors.dart';
 import 'package:Consult/component/widgets/header.dart';
 import 'package:Consult/component/texts.dart';
 import 'package:Consult/component/inputdefault.dart';
-import 'package:get/get.dart';
+import 'package:Consult/controller/auth.dart';
+import 'package:Consult/view/account/auth/signup.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -23,20 +23,15 @@ class _SignInScreenState extends State<SignInScreen> {
   TextEditingController passwordController = TextEditingController();
   final AuthController authController = Get.put(AuthController());
 
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
 
   List<Widget> get _pages => [
         InputLogin(
@@ -51,6 +46,15 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
       ];
 
+  void _previousPage() {
+    if (_currentPage > 0) {
+      _pageController.previousPage(
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeIn,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -58,7 +62,6 @@ class _SignInScreenState extends State<SignInScreen> {
         backgroundColor: lightColor,
         body: LayoutBuilder(
           builder: (context, constraints) {
-            // Determina se a largura da tela é maior que um valor específico para desktop
             bool isDesktop = constraints.maxWidth > 800;
 
             return Form(
@@ -78,9 +81,8 @@ class _SignInScreenState extends State<SignInScreen> {
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              // Para telas grandes (desktop), centraliza a área de login em uma coluna
                               Container(
-                                width: 600, // Largura fixa para desktop
+                                width: 600,
                                 child: PageView.builder(
                                   controller: _pageController,
                                   onPageChanged: (index) {
@@ -111,23 +113,45 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   SizedBox(
                     height: 200,
-                    child: Column(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        // Botão anterior
+                        if (_currentPage > 0)
+                          GestureDetector(
+                            onTap: _previousPage,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                DefaultCircleButton(
+                                  color: FifthColor,
+                                  icon: Icons.arrow_left,
+                                  iconColor: lightColor,
+                                  onClick: _previousPage,
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                              ],
+                            ),
+                          ),
+                        SizedBox(
+                          width: 25,
+                        ),
+                        // Botão próximo
                         GestureDetector(
                           onTap: () {
                             if (_currentPage == _pages.length - 1) {
-                              // Se for a última página, finalize o tutorial
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const SignInScreen(),
-                                ),
-                              );
+                              // Se for a última página, finalize o login
+                              if (_formKey.currentState!.validate()) {
+                                authController.signIn(
+                                    email: emailController.text,
+                                    password: passwordController.text);
+                              }
                             } else {
                               // Caso contrário, vá para a próxima página
                               _pageController.nextPage(
-                                duration: Duration(milliseconds: 300),
+                                duration: Duration(milliseconds: 500),
                                 curve: Curves.easeIn,
                               );
                             }
@@ -140,14 +164,12 @@ class _SignInScreenState extends State<SignInScreen> {
                                 iconColor: lightColor,
                                 onClick: () {
                                   if (_currentPage == _pages.length - 1) {
-                                    // Se for a última página, finalize o tutorial
                                     if (_formKey.currentState!.validate()) {
                                       authController.signIn(
                                           email: emailController.text,
                                           password: passwordController.text);
                                     }
                                   } else {
-                                    // Caso contrário, vá para a próxima página
                                     _pageController.nextPage(
                                       duration: Duration(milliseconds: 500),
                                       curve: Curves.easeIn,

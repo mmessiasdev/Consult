@@ -24,7 +24,7 @@ class DefaultCircleButton extends StatelessWidget {
         maxRadius: 40,
         backgroundColor: color,
         child: Icon(
-          icon ?? Icons.arrow_right_alt,
+          icon ?? Icons.arrow_right,
           color: iconColor,
         ),
       ),
